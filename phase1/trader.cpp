@@ -1,5 +1,6 @@
 #include "receiver.h"
 #include <vector>
+#include "map.h"
 using namespace std;
 
 string previo, preprevio;
@@ -35,6 +36,14 @@ vector<string> extract_orders(string message)
     return orders;
 }
 
+int checkprice(string s, vector<vector<string>>& comp){
+    if (comp.empty()){push_back();}
+    for(int i=0; i<comp.size(); i++){
+        if(s==comp[i][i]){
+        }
+    }
+}
+
 void process(string message)
 {
     // process the message
@@ -42,9 +51,10 @@ void process(string message)
     vector<string> orders = extract_orders(message);
     orders[0] = previo + orders[0];
     previo = preprevio;
+    vector<vector<string>> company;
     for (auto u: orders)
-    {
-        cout<<u<<endl;
+    {   
+        checkprice(u, company);
     }
 }
 

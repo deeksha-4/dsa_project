@@ -1,0 +1,3 @@
+ASML 100 b
+ASML 70 b
+ASML 100 s
