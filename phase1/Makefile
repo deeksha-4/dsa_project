@@ -33,6 +33,8 @@ clean:
 	rm -rf *~
 
 test:
+	g++ -std=c++20 trader.cpp -o trader
+	g++ -std=c++20 iml.cpp -o iml
 	./trader 1 > output.txt &
 	sleep 1
 	./iml inputs/data1.txt

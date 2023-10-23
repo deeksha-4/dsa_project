@@ -9,31 +9,24 @@ int main() {
     // std::cout << message;
 
     // splitting message into orders
-
     std::vector<std::string> orders;
     
     int start = 0;
     while(start < message.length())
     {
         int end = message.find('#', start);
-        if (start == 0)
-        {
-            orders.push_back(message.substr(start, end - start));
-            start = end + 2;
-        }
-        else if (end == std::string::npos)
+        if (end == std::string::npos)
         {
             orders.push_back(message.substr(start));
             break;
         }
         else
         {
-            orders.push_back(message.substr(start, end - start));
-            start = end + 2;
+            orders.push_back(message.substr(start, end - start + 1));
+            start = end + 1;
         }
     }
-
-    
+    // now orders has the list of orders
 
     return 0;
 }
