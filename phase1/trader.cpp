@@ -2,7 +2,15 @@
 #include <vector>
 using namespace std;
 
+class company
+{   
+    public:
+    string name;
+    int price;
+};
+
 string previo, preprevio;
+vector<company> stocks;
 
 vector<string> extract_orders(string message)
 {
@@ -37,21 +45,102 @@ vector<string> extract_orders(string message)
 
 void process(string message)
 {
-    // process the message
-    // for now just printing
     vector<string> orders = extract_orders(message);
     orders[0] = previo + orders[0];
     previo = preprevio;
-    for (auto u: orders)
+
+    for (auto order : orders)
     {
-        cout<<u<<endl;
-    }
+        string name, price;
+        char type;
+        auto it = order.begin();
+        while(*it != ' ')
+        {
+            name.push_back(*it);
+            it++;
+        }
+        it++;
+        while(*it != ' ')
+        {
+            price.push_back(*it);
+            it++;
+        }
+        it++;
+        type = *it;
+
+        int integer_price = stoi(price);
+        bool found = 0;
+
+        // for (company c: stocks)
+        for (int i = 0; i<stocks.size(); ++i)
+        {
+            if (stocks[i].name == name)
+            {
+                found = 1;
+                if (type == 'b')
+                {
+                    if (integer_price > stocks[i].price)
+                    {
+                        cout<<name<<" "<<integer_price<<" "<<'s'<<endl;
+                        company c;
+                        c.name = name;
+                        c.price = integer_price;
+                        stocks[i] = c;
+                        // for(auto u: stocks){
+                        // cout<<u.name<<" "<<u.price<<endl;}
+                    }
+
+                    else
+                    {
+                        cout<<"No Trade"<<endl;
+                    }
+                }
+                else if (type == 's')
+                {
+                    if (integer_price < stocks[i].price)
+                    {
+                        cout<<name<<" "<<integer_price<<" "<<'b'<<endl;
+                        company c;
+                        c.name = name;
+                        c.price = integer_price;
+                        stocks[i] = c;
+                        // for(auto u: stocks){
+                        // cout<<u.name<<" "<<u.price<<endl;}
+                    }
+                    else
+                    {
+                        cout<<"No Trade"<<endl;
+                    }
+                }
+                break;
+            }
+        }
+        if (!found)
+        {
+            if (type == 'b')
+            {
+                cout<<name<<" "<<integer_price<<" "<<'s'<<endl;
+                company c;
+                c.name = name;
+                c.price = integer_price;
+                stocks.push_back(c);
+            }
+            else if (type == 's')
+            {
+                cout<<name<<" "<<integer_price<<" "<<'b'<<endl;
+                company c;
+                c.name = name;
+                c.price = integer_price;
+                stocks.push_back(c);
+            }
+        }
+    }    
 }
 
 int main() {
 
     Receiver rcv;
-    sleep(5);
+    // sleep(5);
 
     while (true)
     {
@@ -64,16 +153,3 @@ int main() {
 
     return 0;
 }
-
-// int main()
-// {
-//     Receiver rcv;
-//     sleep(5);
-//     string message = rcv.readIML();
-//     auto it = message.end();
-//     --it;
-//     --it;
-//     --it;
-//     cout<<*it;
-//     // cout<<message;
-// }
