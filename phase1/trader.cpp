@@ -1,21 +1,17 @@
 #include "receiver.h"
 #include <vector>
+using namespace std;
 
-int main() {
+string previo, preprevio;
 
-    Receiver rcv;
-    sleep(5);
-    std::string message = rcv.readIML();
-    // std::cout << message;
-
-    // splitting message into orders
-    std::vector<std::string> orders;
-    
+vector<string> extract_orders(string message)
+{
+    vector<string> orders;
     int start = 0;
     while(start < message.length())
     {
         int end = message.find('#', start);
-        if (end == std::string::npos)
+        if (end >= message.length()-1)
         {
             orders.push_back(message.substr(start));
             break;
@@ -26,7 +22,58 @@ int main() {
             start = end + 1;
         }
     }
-    // now orders has the list of orders
+    string last = orders.back();
+    if (*(--last.end())!='#')
+    {
+        preprevio = last;
+        orders.pop_back();
+    }
+    else
+    {
+        preprevio = "";
+    }
+    return orders;
+}
+
+void process(string message)
+{
+    // process the message
+    // for now just printing
+    vector<string> orders = extract_orders(message);
+    orders[0] = previo + orders[0];
+    previo = preprevio;
+    for (auto u: orders)
+    {
+        cout<<u<<endl;
+    }
+}
+
+int main() {
+
+    Receiver rcv;
+    sleep(5);
+
+    while (true)
+    {
+        string message = rcv.readIML();
+        auto endmarker = message.end();
+        --endmarker;
+        process(message);
+        if (*endmarker == '$') break;
+    }
 
     return 0;
 }
+
+// int main()
+// {
+//     Receiver rcv;
+//     sleep(5);
+//     string message = rcv.readIML();
+//     auto it = message.end();
+//     --it;
+//     --it;
+//     --it;
+//     cout<<*it;
+//     // cout<<message;
+// }
