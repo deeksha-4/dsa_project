@@ -27,7 +27,7 @@ vector<string> extract_orders(string message)
         else
         {
             orders.push_back(message.substr(start, end - start + 1));
-            start = end + 1;
+            start = end + 2;
         }
     }
     string last = orders.back();
@@ -81,7 +81,7 @@ void process(string message)
                 {
                     if (integer_price > stocks[i].price)
                     {
-                        cout<<name<<" "<<integer_price<<" "<<'s'<<endl;
+                        cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
                         company c;
                         c.name = name;
                         c.price = integer_price;
@@ -92,14 +92,14 @@ void process(string message)
 
                     else
                     {
-                        cout<<"No Trade"<<endl;
+                        cout<<"No Trade"<<"\r"<<endl;
                     }
                 }
                 else if (type == 's')
                 {
                     if (integer_price < stocks[i].price)
                     {
-                        cout<<name<<" "<<integer_price<<" "<<'b'<<endl;
+                        cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
                         company c;
                         c.name = name;
                         c.price = integer_price;
@@ -109,7 +109,7 @@ void process(string message)
                     }
                     else
                     {
-                        cout<<"No Trade"<<endl;
+                        cout<<"No Trade"<<"\r"<<endl;
                     }
                 }
                 break;
@@ -119,7 +119,7 @@ void process(string message)
         {
             if (type == 'b')
             {
-                cout<<name<<" "<<integer_price<<" "<<'s'<<endl;
+                cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
                 company c;
                 c.name = name;
                 c.price = integer_price;
@@ -127,7 +127,7 @@ void process(string message)
             }
             else if (type == 's')
             {
-                cout<<name<<" "<<integer_price<<" "<<'b'<<endl;
+                cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
                 company c;
                 c.name = name;
                 c.price = integer_price;
