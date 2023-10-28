@@ -1,13 +1,13 @@
 Receiver is listening on port 8888
-ASML 650 s#
-ASML 645 b#
-AAPL 430 b#
-AAPL 435 b#
-AAPL 435 s#
-ASML 646 b#
-ASML 647 b#
-ASML 651 b#
-AAPL 432 s#
-ASML 654 s#
-ASML 652 s#
-ASML 650 s#
+ASML 650 b
+SML 645 s
+APL 430 s
+APL 435 s
+No Trade
+SML 646 s
+SML 647 s
+SML 651 s
+APL 432 b
+No Trade
+No Trade
+SML 650 b
