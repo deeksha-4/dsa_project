@@ -9,8 +9,19 @@ class company
     int price;
 };
 
+class Order
+{
+    public:
+    string name;
+    char type;
+    int price;
+};
+
 string previo, preprevio;
 vector<company> stocks;
+vector<Order> unmatched_buy;
+vector<Order> unmatched_sell;
+// unmatched holds all the orders on which we passed
 
 vector<string> extract_orders(string message)
 {
@@ -79,6 +90,20 @@ void process(string message)
                 found = 1;
                 if (type == 'b')
                 {
+                    int flag = 0;
+                    for (auto iter = unmatched_sell.begin(); iter != unmatched_sell.end(); iter++)
+                    {
+                        if ((*iter).name == name && (*iter).price == integer_price)
+                        {
+                            unmatched_sell.erase(iter);
+                            cout<<"No Trade\r"<<endl;
+                            flag = 1;
+                            break;
+                        }
+                    }
+
+                    if (flag) continue;
+
                     if (integer_price > stocks[i].price)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
@@ -92,11 +117,29 @@ void process(string message)
 
                     else
                     {
+                        Order o;
+                        o.name = name;
+                        o.price = integer_price;
+                        unmatched_buy.push_back(o);
                         cout<<"No Trade"<<"\r"<<endl;
                     }
                 }
                 else if (type == 's')
                 {
+                    int flag = 0;
+                    for (auto iter = unmatched_buy.begin(); iter != unmatched_buy.end(); iter++)
+                    {
+                        if ((*iter).name == name && (*iter).price == integer_price)
+                        {
+                            unmatched_buy.erase(iter);
+                            cout<<"No Trade\r"<<endl;
+                            flag = 1;
+                            break;
+                        }
+                    }
+
+                    if (flag) continue;
+                    
                     if (integer_price < stocks[i].price)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
@@ -109,6 +152,10 @@ void process(string message)
                     }
                     else
                     {
+                        Order o;
+                        o.name = name;
+                        o.price = integer_price;
+                        unmatched_sell.push_back(o);
                         cout<<"No Trade"<<"\r"<<endl;
                     }
                 }
