@@ -1,4 +1,5 @@
-ASML 80 s#
-ASML 100 s#
-ASML 70 s#
-ASML 100 b#
+ASML 60 b#
+ASML 50 b#
+ASML 40 b#
+ASML 40 s#
+ASML 50 s#

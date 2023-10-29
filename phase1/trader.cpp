@@ -82,41 +82,77 @@ void process(string message)
         int integer_price = stoi(price);
         bool found = 0;
 
-        // for (company c: stocks)
+        
         for (int i = 0; i<stocks.size(); ++i)
         {
-            if (stocks[i].name == name)
+            if (stocks[i].name == name) //have a history
             {
                 found = 1;
                 if (type == 'b')
                 {
-                    int flag = 0;
-                    for (auto iter = unmatched_sell.begin(); iter != unmatched_sell.end(); iter++)
-                    {
-                        if ((*iter).name == name && (*iter).price == integer_price)
+                    bool flag = 0;
+                    // checking for unmatched orders first
+                    for (auto iter = 0; iter < unmatched_sell.size(); iter++)
+                    {        
+                        if (unmatched_sell[iter].name == name)
                         {
-                            unmatched_sell.erase(iter);
-                            cout<<"No Trade\r"<<endl;
-                            flag = 1;
-                            break;
+                            if (unmatched_sell[iter].price == integer_price) // orders cancel out
+                            {
+                                unmatched_sell.erase(unmatched_sell.begin() + iter);
+                                cout<<"No Trade\r"<<endl;
+                                flag = 1;
+                                break;
+                            }
                         }
                     }
 
-                    if (flag) continue;
+                    if (flag) break;
 
-                    if (integer_price > stocks[i].price)
+                    for (auto iter = 0; iter < unmatched_buy.size(); iter++)
+                    {
+                        if (unmatched_buy[iter].name == name)
+                        {        
+
+                            if (unmatched_buy[iter].price >= integer_price) //directly delete if buying for less than i'll sell and waitlist
+                            {
+                                cout<<"No Trade\r"<<endl;
+                                
+                            }
+                            else if (unmatched_buy[iter].price < integer_price && stocks[i].price >= integer_price) // buy for more than waitlist but i still wont sell
+                            {
+                                unmatched_buy[iter].price = integer_price;
+                                cout<<"No Trade\r"<<endl;
+                                
+                            }
+                            else if (unmatched_buy[iter].price < integer_price && stocks[i].price < integer_price) // ill sell and kill the waitlist
+                            {
+                                unmatched_buy.erase(unmatched_buy.begin() + iter);
+                                cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
+                                company c;
+                                c.name = name;
+                                c.price = integer_price;
+                                stocks[i] = c;                                
+                            }   
+                            flag = 1;
+                            break;                             
+                        }
+                    }
+
+                    if (flag) break;
+                        
+                    // otherwise no waitlist element. check w history, take or leave
+
+                    if (stocks[i].price < integer_price) // ill buy cos its less
                     {
                         cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
                         company c;
                         c.name = name;
                         c.price = integer_price;
                         stocks[i] = c;
-                        // for(auto u: stocks){
-                        // cout<<u.name<<" "<<u.price<<endl;}
                     }
 
-                    else
-                    {
+                    else // add waitlist element
+                    {                      
                         Order o;
                         o.name = name;
                         o.price = integer_price;
@@ -124,45 +160,86 @@ void process(string message)
                         cout<<"No Trade"<<"\r"<<endl;
                     }
                 }
+
+
                 else if (type == 's')
                 {
-                    int flag = 0;
-                    for (auto iter = unmatched_buy.begin(); iter != unmatched_buy.end(); iter++)
+                    bool flag = 0;
+                    // checking for unmatched orders first
+                    for (auto iter = 0; iter < unmatched_buy.size(); iter++)
                     {
-                        if ((*iter).name == name && (*iter).price == integer_price)
+                        if (unmatched_buy[iter].name == name)
                         {
-                            unmatched_buy.erase(iter);
-                            cout<<"No Trade\r"<<endl;
-                            flag = 1;
-                            break;
+                            if (unmatched_buy[iter].price == integer_price) // orders cancel out
+                            {
+                                unmatched_buy.erase(unmatched_buy.begin() + iter);
+                                cout<<"No Trade\r"<<endl;
+                                flag = 1;
+                                break;
+                            }
                         }
                     }
 
-                    if (flag) continue;
+                    if (flag) break;
+
+
+                    for (auto iter = 0; iter < unmatched_sell.size(); iter++)
+                    {
+                        if (unmatched_sell[iter].name == name)
+                        {          
+
+                            if (unmatched_sell[iter].price <= integer_price) //directly delete if buying for less than i'll sell and waitlist
+                            {
+                                cout<<"No Trade\r"<<endl;
+                                
+                            }
+                            else if (unmatched_sell[iter].price > integer_price && stocks[i].price <= integer_price) // buy for more than waitlist but i still wont sell
+                            {
+                                unmatched_sell[iter].price = integer_price;
+                                cout<<"No Trade\r"<<endl;
+                                
+                            }
+                            else if (unmatched_sell[iter].price > integer_price && stocks[i].price > integer_price) // ill sell and kill the waitlist
+                            {
+                                unmatched_sell.erase(unmatched_sell.begin() + iter);
+                                cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
+                                company c;
+                                c.name = name;
+                                c.price = integer_price;
+                                stocks[i] = c;
+                                
+                            }   
+                            flag = 1;
+                            break;                             
+                        }
+                    }
                     
-                    if (integer_price < stocks[i].price)
+
+                    if (flag) break;
+                        
+                    // otherwise no waitlist element. check w history, take or leave
+
+                    if (stocks[i].price > integer_price) // ill buy cos its less
                     {
                         cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
                         company c;
                         c.name = name;
                         c.price = integer_price;
                         stocks[i] = c;
-                        // for(auto u: stocks){
-                        // cout<<u.name<<" "<<u.price<<endl;}
                     }
-                    else
-                    {
+
+                    else // add waitlist element
+                    {                      
                         Order o;
                         o.name = name;
                         o.price = integer_price;
                         unmatched_sell.push_back(o);
                         cout<<"No Trade"<<"\r"<<endl;
                     }
-                }
-                break;
+               }        
             }
         }
-        if (!found)
+        if (!found) // no history, must take
         {
             if (type == 'b')
             {
