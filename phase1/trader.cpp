@@ -293,19 +293,36 @@ void process(string message)
     }    
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 
     Receiver rcv;
     // sleep(5);
 
-    while (true)
-    {
-        string message = rcv.readIML();
-        auto endmarker = message.end();
-        --endmarker;
-        process(message);
-        if (*endmarker == '$') break;
+    int choice = stoi(argv[1]);
+
+    switch (choice){
+
+        case 1:
+            while (true)
+            {
+                string message = rcv.readIML();
+                auto endmarker = message.end();
+                --endmarker;
+                process(message);
+                if (*endmarker == '$') break;
+            }
+            break;
+        
+
+        case 2:
+            // arbitrage
+            break;
+
+        case 3:
+            // part3 
+            break;
     }
+    
 
     return 0;
 }
