@@ -1,6 +1,6 @@
 Receiver is listening on port 8888
-ASML 60 s
+A 100 s
 No Trade
 No Trade
-ASML 40 b
 No Trade
+A 140 s

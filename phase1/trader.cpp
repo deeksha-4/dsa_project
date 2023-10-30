@@ -106,6 +106,21 @@ void process(string message)
                         }
                     }
 
+                    if (flag)
+                    {
+                        for (auto iter = 0; iter < unmatched_buy.size(); iter++)
+                        {
+                            if (unmatched_buy[iter].name == name)
+                            {
+                                if (unmatched_buy[iter].price < integer_price)
+                                {
+                                    unmatched_buy.erase(unmatched_buy.begin() + iter);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     if (flag) break;
 
                     for (auto iter = 0; iter < unmatched_buy.size(); iter++)
@@ -180,6 +195,21 @@ void process(string message)
                         }
                     }
 
+                    if (flag)
+                    {
+                        for (auto iter = 0; iter < unmatched_sell.size(); iter++)
+                        {
+                            if (unmatched_sell[iter].name == name)
+                            {
+                                if (unmatched_sell[iter].price > integer_price)
+                                {
+                                    unmatched_sell.erase(unmatched_sell.begin() + iter);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     if (flag) break;
 
 
@@ -213,6 +243,8 @@ void process(string message)
                             break;                             
                         }
                     }
+
+                    
                     
 
                     if (flag) break;
