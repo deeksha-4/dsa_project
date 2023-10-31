@@ -52,7 +52,10 @@ void process(string message)
     previo = preprevio;
 
     for (auto order : orders)
-    {
+    {   
+    //     for(auto u: stocks){
+    //     cout<<u.name<<endl<<u.waiting_buy_price<<endl<<u.waiting_sell_price<<endl<<u.price<<endl;
+    // }
         string name, price;
         char type;
         auto it = order.begin();
@@ -79,52 +82,40 @@ void process(string message)
             if (stocks[i].name == name)
             {
                 found = 1;
-
                 if (type == 'b')
                 {
+
                     if (stocks[i].waiting_buy_price!=-1 && (stocks[i].waiting_buy_price >= integer_price))
                     {
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-                    else if (stocks[i].waiting_buy_price!=-1 && (stocks[i].waiting_buy_price < integer_price && stocks[i].price >= integer_price))
+                    else if (stocks[i].waiting_buy_price!=-1 && (stocks[i].waiting_buy_price < integer_price))
                     {
                         stocks[i].waiting_buy_price = integer_price;
-                        cout<<"No Trade\r"<<endl;
-                        break;
+
                     }
-                    else if (stocks[i].waiting_buy_price!=-1 && (stocks[i].waiting_buy_price < integer_price && stocks[i].price < integer_price))
+                    if (stocks[i].waiting_sell_price!=-1 && stocks[i].waiting_sell_price == integer_price)
                     {
                         stocks[i].waiting_buy_price = -1;
-                        cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
-                        stocks[i].price = integer_price;
-                        break;
-                    }
-                    
-                    if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price == integer_price))
-                    {
                         stocks[i].waiting_sell_price = -1;
                         cout<<"No Trade\r"<<endl;
-                        if (stocks[i].waiting_buy_price < integer_price)
-                        {
-                            stocks[i].waiting_buy_price = -1;
-                        }
                         break;
                     }
-
                     if (stocks[i].price < integer_price)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
                         stocks[i].price = integer_price;
+                        stocks[i].waiting_buy_price = -1;
                         break;
                     }
-                    if (stocks[i].price >= integer_price)
+                    else if (stocks[i].price >= integer_price)
                     {
                         stocks[i].waiting_buy_price = integer_price;
                         cout<<"No Trade"<<"\r"<<endl;
                         break;
                     }
-
+                    
                 }
 
                 else if (type == 's')
@@ -135,17 +126,16 @@ void process(string message)
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-                    else if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price > integer_price && stocks[i].price <= integer_price))
+                    else if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price > integer_price))
                     {
                         stocks[i].waiting_sell_price = integer_price;
-                        cout<<"No Trade\r"<<endl;
-                        break;
+
                     }
-                    else if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price > integer_price && stocks[i].price > integer_price))
+                    if (stocks[i].waiting_buy_price!=-1 && stocks[i].waiting_buy_price == integer_price)
                     {
+                        stocks[i].waiting_buy_price = -1;
                         stocks[i].waiting_sell_price = -1;
-                        cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
-                        stocks[i].price = integer_price;
+                        cout<<"No Trade\r"<<endl;
                         break;
                     }
 
@@ -164,14 +154,16 @@ void process(string message)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
                         stocks[i].price = integer_price;
+                        stocks[i].waiting_sell_price = -1;
                         break;
                     }
-                    if (stocks[i].price <= integer_price)
-                    {
+                    else if (stocks[i].price <= integer_price)
+                    {   
                         stocks[i].waiting_sell_price = integer_price;
                         cout<<"No Trade"<<"\r"<<endl;
                         break;
                     }
+                    
                 }
             }
         }
