@@ -39,8 +39,8 @@ clean_part1:
 	g++ -std=c++20 iml.cpp -o iml
 	./trader 1 > output.txt &
 	sleep 1
-	./iml inputs/part12.txt
-	diff outputs/outpart2.txt output.txt
+	./iml inputs/data1.txt
+	diff outputs/out1.txt output.txt
 
 clean_part2:
 	rm -rf output.txt trader iml
