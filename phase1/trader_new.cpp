@@ -79,18 +79,7 @@ void process(string message)
             if (stocks[i].name == name)
             {
                 found = 1;
-                // if (type == 'b')
-                // {
-                //     if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price == integer_price))
-                //     {
-                //         stocks[i].waiting_sell_price = -1;
-                //         cout<<"No Trade\r"<<endl;
-                //         if (stocks[i].waiting_buy_price < integer_price)
-                //         {
-                //             stocks[i].waiting_buy_price = -1;
-                //         }
-                //         break;
-                //     }
+
                 if (type == 'b')
                 {
                     if (stocks[i].waiting_buy_price!=-1 && (stocks[i].waiting_buy_price >= integer_price))
@@ -112,6 +101,17 @@ void process(string message)
                         break;
                     }
                     
+                    if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price == integer_price))
+                    {
+                        stocks[i].waiting_sell_price = -1;
+                        cout<<"No Trade\r"<<endl;
+                        if (stocks[i].waiting_buy_price < integer_price)
+                        {
+                            stocks[i].waiting_buy_price = -1;
+                        }
+                        break;
+                    }
+
                     if (stocks[i].price < integer_price)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
@@ -124,16 +124,7 @@ void process(string message)
                         cout<<"No Trade"<<"\r"<<endl;
                         break;
                     }
-                    if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price == integer_price))
-                    {
-                        stocks[i].waiting_sell_price = -1;
-                        cout<<"No Trade\r"<<endl;
-                        if (stocks[i].waiting_buy_price < integer_price)
-                        {
-                            stocks[i].waiting_buy_price = -1;
-                        }
-                        break;
-                    }
+
                 }
 
                 else if (type == 's')
@@ -157,6 +148,18 @@ void process(string message)
                         stocks[i].price = integer_price;
                         break;
                     }
+
+                    if (stocks[i].waiting_buy_price!=-1 && stocks[i].waiting_buy_price == integer_price)
+                    {
+                        stocks[i].waiting_buy_price = -1;
+                        cout<<"No Trade\r"<<endl;
+                        if (stocks[i].waiting_sell_price > integer_price)
+                        {
+                            stocks[i].waiting_sell_price = -1;
+                        }
+                        break;
+                    }
+                    
                     if (stocks[i].price > integer_price)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
@@ -167,16 +170,6 @@ void process(string message)
                     {
                         stocks[i].waiting_sell_price = integer_price;
                         cout<<"No Trade"<<"\r"<<endl;
-                        break;
-                    }
-                    if (stocks[i].waiting_buy_price!=-1 && stocks[i].waiting_buy_price == integer_price)
-                    {
-                        stocks[i].waiting_buy_price = -1;
-                        cout<<"No Trade\r"<<endl;
-                        if (stocks[i].waiting_sell_price > integer_price)
-                        {
-                            stocks[i].waiting_sell_price = -1;
-                        }
                         break;
                     }
                 }
