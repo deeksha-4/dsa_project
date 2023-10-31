@@ -35,12 +35,12 @@ clean:
 clean_part1:
 	rm -rf output.txt trader iml
 	rm -rf *~
-	g++ -std=c++20 trader.cpp -o trader
+	g++ -std=c++20 trader_new.cpp -o trader
 	g++ -std=c++20 iml.cpp -o iml
 	./trader 1 > output.txt &
 	sleep 1
-	./iml inputs/data1.txt
-	diff outputs/out1.txt output.txt
+	./iml inputs/phase1part1testcases/test7.txt
+	diff outputs/phase1part1output/out7.txt output.txt
 
 clean_part2:
 	rm -rf output.txt trader iml

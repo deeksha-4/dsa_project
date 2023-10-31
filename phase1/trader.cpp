@@ -82,7 +82,7 @@ void process(string message)
         int integer_price = stoi(price);
         bool found = 0;
 
-        // for (company c: stocks)
+        
         for (int i = 0; i<stocks.size(); ++i)
         {
             if (stocks[i].name == name) //have a history
@@ -93,7 +93,11 @@ void process(string message)
                     bool flag = 0;
                     // checking for unmatched orders first
                     for (auto iter = 0; iter < unmatched_sell.size(); iter++)
+<<<<<<< HEAD
                     {
+=======
+                    {        
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
                         if (unmatched_sell[iter].name == name)
                         {
                             if (unmatched_sell[iter].price == integer_price) // orders cancel out
@@ -105,23 +109,46 @@ void process(string message)
                             }
                         }
                     }
+<<<<<<< HEAD
                     if(flag){
                         for (auto iter = 0; iter < unmatched_buy.size(); iter++)
                     {
                         if (unmatched_buy[iter].name == name){
                             if (unmatched_buy[iter].price < integer_price){
                                 unmatched_buy.erase(unmatched_buy.begin() + iter);
+=======
+
+                    if (flag)
+                    {
+                        for (auto iter = 0; iter < unmatched_buy.size(); iter++)
+                        {
+                            if (unmatched_buy[iter].name == name)
+                            {
+                                if (unmatched_buy[iter].price < integer_price)
+                                {
+                                    unmatched_buy.erase(unmatched_buy.begin() + iter);
+                                    break;
+                                }
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
                             }
                         }
                     }
 
+<<<<<<< HEAD
                     }
+=======
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
                     if (flag) break;
 
                     for (auto iter = 0; iter < unmatched_buy.size(); iter++)
                     {
+<<<<<<< HEAD
                         if (unmatched_buy[iter].name == name){
                                     
+=======
+                        if (unmatched_buy[iter].name == name)
+                        {        
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
 
                             if (unmatched_buy[iter].price >= integer_price) //directly delete if buying for less than i'll sell and waitlist
                             {
@@ -141,8 +168,12 @@ void process(string message)
                                 company c;
                                 c.name = name;
                                 c.price = integer_price;
+<<<<<<< HEAD
                                 stocks[i] = c;
                                 
+=======
+                                stocks[i] = c;                                
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
                             }   
                             flag = 1;
                             break;                             
@@ -190,25 +221,49 @@ void process(string message)
                             }
                         }
                     }
+<<<<<<< HEAD
                     if(flag){
                         for (auto iter = 0; iter < unmatched_sell.size(); iter++)
                     {
                         if (unmatched_sell[iter].name == name){
                             if (unmatched_sell[iter].price > integer_price){
                                 unmatched_sell.erase(unmatched_sell.begin() + iter);
+=======
+
+                    if (flag)
+                    {
+                        for (auto iter = 0; iter < unmatched_sell.size(); iter++)
+                        {
+                            if (unmatched_sell[iter].name == name)
+                            {
+                                if (unmatched_sell[iter].price > integer_price)
+                                {
+                                    unmatched_sell.erase(unmatched_sell.begin() + iter);
+                                    break;
+                                }
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
                             }
                         }
                     }
 
+<<<<<<< HEAD
                     }
 
+=======
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
                     if (flag) break;
 
 
                     for (auto iter = 0; iter < unmatched_sell.size(); iter++)
                     {
+<<<<<<< HEAD
                         if (unmatched_sell[iter].name == name){
                                     
+=======
+                        if (unmatched_sell[iter].name == name)
+                        {          
+
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
                             if (unmatched_sell[iter].price <= integer_price) //directly delete if buying for less than i'll sell and waitlist
                             {
                                 cout<<"No Trade\r"<<endl;
@@ -235,7 +290,14 @@ void process(string message)
                         }
                     }
 
+<<<<<<< HEAD
                     if (flag) {break;}
+=======
+                    
+                    
+
+                    if (flag) break;
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
                         
                     // otherwise no waitlist element. check w history, take or leave
 
@@ -281,19 +343,36 @@ void process(string message)
     }    
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 
     Receiver rcv;
     // sleep(5);
 
-    while (true)
-    {
-        string message = rcv.readIML();
-        auto endmarker = message.end();
-        --endmarker;
-        process(message);
-        if (*endmarker == '$') break;
+    int choice = stoi(argv[1]);
+
+    switch (choice){
+
+        case 1:
+            while (true)
+            {
+                string message = rcv.readIML();
+                auto endmarker = message.end();
+                --endmarker;
+                process(message);
+                if (*endmarker == '$') break;
+            }
+            break;
+        
+
+        case 2:
+            // arbitrage
+            break;
+
+        case 3:
+            // part3 
+            break;
     }
+    
 
     return 0;
 }

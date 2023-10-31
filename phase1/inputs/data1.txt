@@ -1,5 +1,20 @@
+<<<<<<< HEAD
 A 100 b#
 A 140 s#
 A 70 b#
 A 70 s#
 A 140 b#
+=======
+ASML 650 s#
+ASML 645 b#
+AAPL 430 b#
+AAPL 435 b#
+AAPL 435 s#
+ASML 646 b#
+ASML 647 b#
+ASML 651 b#
+AAPL 432 s#
+ASML 654 s#
+ASML 652 s#
+ASML 650 s#
+>>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8
