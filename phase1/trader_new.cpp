@@ -53,9 +53,6 @@ void process(string message)
 
     for (auto order : orders)
     {   
-    //     for(auto u: stocks){
-    //     cout<<u.name<<endl<<u.waiting_buy_price<<endl<<u.waiting_sell_price<<endl<<u.price<<endl;
-    // }
         string name, price;
         char type;
         auto it = order.begin();
@@ -114,13 +111,11 @@ void process(string message)
                         stocks[i].waiting_buy_price = integer_price;
                         cout<<"No Trade"<<"\r"<<endl;
                         break;
-                    }
-                    
+                    }                    
                 }
 
                 else if (type == 's')
                 {
-
                     if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price <= integer_price))
                     {
                         cout<<"No Trade\r"<<endl;
@@ -162,8 +157,7 @@ void process(string message)
                         stocks[i].waiting_sell_price = integer_price;
                         cout<<"No Trade"<<"\r"<<endl;
                         break;
-                    }
-                    
+                    }                    
                 }
             }
         }
@@ -206,11 +200,17 @@ int main(int argc, char* argv[]) {
                 process(message);
                 if (*endmarker == '$') break;
             }
-            break;
-        
+            break;        
 
         case 2:
-            // arbitrage
+            while(true)
+            {
+                string message = rcv.readIML();
+                auto endmarker = message.end();
+                --endmarker;
+                process2(message);
+                if (*endmarker == '$') break;
+            }
             break;
 
         case 3:
@@ -218,6 +218,5 @@ int main(int argc, char* argv[]) {
             break;
     }
     
-
     return 0;
 }
