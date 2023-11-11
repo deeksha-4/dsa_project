@@ -9,6 +9,8 @@ class company
     int price;
     int waiting_sell_price; // -1 indicates no waiitng order
     int waiting_buy_price;
+    bool sell_flag = 0; // 1 indicates waiting order
+    bool buy_flag = 0;
 };
 
 string previo, preprevio;
@@ -71,7 +73,6 @@ void process(string message)
 
         int integer_price = stoi(price);
         bool found = 0;
-
         
         for (int i = 0; i < stocks.size(); ++i)
         {
@@ -81,43 +82,35 @@ void process(string message)
                 if (type == 'b')
                 {
 
-                    if (stocks[i].waiting_buy_price!=-1 && (stocks[i].waiting_buy_price >= integer_price))
+                    if (stocks[i].buy_flag && (stocks[i].waiting_buy_price >= integer_price))
                     {
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-                    else if (stocks[i].waiting_buy_price!=-1 && (stocks[i].waiting_buy_price < integer_price))
+                    else if (stocks[i].buy_flag && (stocks[i].waiting_buy_price < integer_price))
                     {
                         stocks[i].waiting_buy_price = integer_price;
-
+                        stocks[i].buy_flag = 1;
                     }
-                    if (stocks[i].waiting_sell_price!=-1 && stocks[i].waiting_sell_price == integer_price)
+                    if (stocks[i].sell_flag && stocks[i].waiting_sell_price == integer_price)
                     {
-                        stocks[i].waiting_buy_price = -1;
-                        stocks[i].waiting_sell_price = -1;
+                        stocks[i].buy_flag = 0;
+                        stocks[i].sell_flag = 0;
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-                    // if (stocks[i].waiting_sell_price!=-1 && stocks[i].waiting_sell_price == integer_price)
-                    // {
-                    //     stocks[i].waiting_sell_price = -1;
-                    //     cout<<"No Trade\r"<<endl;
-                    //     if (stocks[i].waiting_buy_price < integer_price)
-                    //     {
-                    //         stocks[i].waiting_buy_price = -1;
-                    //     }
-                    //     break;
-                    // }
+
                     if (stocks[i].price < integer_price)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
                         stocks[i].price = integer_price;
-                        stocks[i].waiting_buy_price = -1;
+                        stocks[i].buy_flag = 0;
                         break;
                     }
                     else if (stocks[i].price >= integer_price)
                     {
                         stocks[i].waiting_buy_price = integer_price;
+                        stocks[i].buy_flag = 1;
                         cout<<"No Trade"<<"\r"<<endl;
                         break;
                     }
@@ -126,49 +119,38 @@ void process(string message)
 
                 else if (type == 's')
                 {
-                    if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price <= integer_price))
+                    if (stocks[i].sell_flag && (stocks[i].waiting_sell_price <= integer_price))
                     {
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-                    else if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price > integer_price))
+                    else if (stocks[i].sell_flag && (stocks[i].waiting_sell_price > integer_price))
                     {
                         stocks[i].waiting_sell_price = integer_price;
-
+                        stocks[i].sell_flag = 1;
                     }
-                    if (stocks[i].waiting_buy_price!=-1 && stocks[i].waiting_buy_price == integer_price)
+                    if (stocks[i].buy_flag && stocks[i].waiting_buy_price == integer_price)
                     {
-                        stocks[i].waiting_buy_price = -1;
-                        stocks[i].waiting_sell_price = -1;
+                        stocks[i].buy_flag = 0;
+                        stocks[i].sell_flag = 0;
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-
-                    // if (stocks[i].waiting_buy_price!=-1 && stocks[i].waiting_buy_price == integer_price)
-                    // {
-                    //     stocks[i].waiting_buy_price = -1;
-                    //     cout<<"No Trade\r"<<endl;
-                    //     if (stocks[i].waiting_sell_price > integer_price)
-                    //     {
-                    //         stocks[i].waiting_sell_price = -1;
-                    //     }
-                    //     break;
-                    // }
                     
                     if (stocks[i].price > integer_price)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
                         stocks[i].price = integer_price;
-                        stocks[i].waiting_sell_price = -1;
+                        stocks[i].sell_flag = 0;
                         break;
                     }
                     else if (stocks[i].price <= integer_price)
                     {   
                         stocks[i].waiting_sell_price = integer_price;
+                        stocks[i].sell_flag = 1;
                         cout<<"No Trade"<<"\r"<<endl;
                         break;
-                    }
-                    
+                    }                    
                 }
             }
         }
@@ -200,10 +182,6 @@ class arbitorder{
     vector<int> quantity;
     int netprice;
     char otype;
-    int waiting_sellprice;
-    bool waitingsellp;
-    int waiting_buyprice;
-    bool waitingbuyp;
 };
 
 vector<arbitorder> arbitrage;
@@ -240,6 +218,7 @@ void processtwo(string message)
     orders[0] = previo + orders[0];
     previo = preprevio;
     bool profit0 = 1;
+    int totalprofit=0;
     for (auto order : orders)
     {
         vector<possible_arbitage> arbitrage_array;
@@ -252,7 +231,6 @@ void processtwo(string message)
         type = *ite;
         ite = ite-2;
         string temp;
-
         while(*ite != ' ')
         {
             temp.push_back(*ite);
@@ -264,7 +242,6 @@ void processtwo(string message)
             netprice.push_back(temp[i-1]);
         }
         int nprice = stoi(netprice);
-        
         while(it < ite)
         {   
             string tempname;
@@ -301,9 +278,9 @@ void processtwo(string message)
             }
             it++;
         }
-        
         if(arbitchance == 0)
         {   
+            // since new company appeared, matching is also not possible
             arbitorder newa;
             newa.quantity = quantity;
             newa.netprice = nprice;
@@ -319,22 +296,110 @@ void processtwo(string message)
         }
         else
         {   
+            bool done = 0, ch = 1;
+            int buyfound = -1, sellfound = -1;
+            // have to check for match first
+            for (int i = 0; i < arbitrage.size(); ++i)
+            {
+                if (arbitrage[i].quantity == quantity)
+                {                    
+                    if (arbitrage[i].otype == 'b')
+                    {
+                        buyfound = i;
+                    }
+                    if (arbitrage[i].otype == 's')
+                    {
+                        sellfound = i;
+                    }
+                }
+                if (buyfound != -1 && sellfound != -1) break;
+            }
+            if (type == 'b')
+            {
+                if (buyfound != -1)
+                {
+                    if (arbitrage[buyfound].netprice >= nprice)
+                    {
+                        // incoming order dies
+                        cout<<"No Trade\r"<<endl;
+                        done = 1;
+                        ch = 0;
+                    }
+                    else
+                    {
+                        arbitrage.erase(arbitrage.begin() + buyfound);
+                        // deleting the old one so that i consider the new one for profit calc
+                        ch = 0;
+                    }
+                }
+                if (ch && sellfound != -1)
+                {
+                    if (arbitrage[sellfound].netprice == nprice)
+                    {
+                        // new one cancels out old one. both die
+                        arbitrage.erase(arbitrage.begin() + sellfound);
+                        cout<<"No Trade\r"<<endl;
+                        done = 1;                        
+                    }
+                }
+            }
+            else if (type == 's')
+            {
+                if (sellfound != -1)
+                {
+                    if (arbitrage[sellfound].netprice <= nprice)
+                    {
+                        // incoming order dies
+                        cout<<"No Trade\r"<<endl;
+                        done = 1;
+                        ch = 0;
+                    }
+                    else
+                    {
+                        arbitrage.erase(arbitrage.begin() + sellfound);
+                        // deleting the old one so that i consider the new one for profit calc
+                        ch = 0;
+                    }
+                }
+                if (ch && buyfound != -1)
+                {
+                    if (arbitrage[buyfound].netprice == nprice)
+                    {
+                        // new one cancels out old one. both die
+                        arbitrage.erase(arbitrage.begin() + buyfound);
+                        cout<<"No Trade\r"<<endl;
+                        done = 1;                        
+                    }
+                }
+            }
+
+            if (done) continue;
+
             vector<vector<int>> res = subsets(arbitrage.size());
             bool sumbool2 =0; 
 
             for (int i = 0; i < res.size(); i++) 
             {
                 vector<int> sum(cname.size(),0);
-                bool arbitadded = 0;
                 bool sumbool = 0;
                 int profit = 0;
                 for(int k = 0 ; k < cname.size(); k++)
                 {
                     for (int j = 0; j < res[i].size(); j++)
-                    {
-                        sum[k] += arbitrage[res[i][j]].quantity[k];
+                    {   if(arbitrage[res[i][j]].otype=='b'){
+                            sum[k] += arbitrage[res[i][j]].quantity[k];
+                        }
+                        else{
+                            sum[k] -= arbitrage[res[i][j]].quantity[k];
+                        }
                     }
-                    if(sum[k] + quantity[k]!=0)
+                    if (type=='b'){
+                        sum[k] += quantity[k];
+                    }
+                    else{
+                        sum[k] -= quantity[k];
+                    }
+                    if(sum[k]!=0)
                     {
                         sumbool = 1; 
                         break;
@@ -393,39 +458,39 @@ void processtwo(string message)
                 cout<<cname[p]<<" "<<quantity[p]<<" ";
             }
         }
-        if(type == 's'){
-            type='b';
-        }
-        else{
-            type='s';
-        }
+        if(type == 's') type = 'b';
+        else type = 's';
+        
         cout<<nprice<<" "<<type<<"\r"<<endl;
 
         for (int k = arbitrage_array[index].indices.size()-1; k >= 0; k--)
         {
             for (int p = 0; p < cname.size(); p++)
             {
-                if (arbitrage[k].quantity[p] != 0) {
-                    cout<<cname[p]<<" "<<arbitrage[k].quantity[p]<<" ";
+                if (arbitrage[arbitrage_array[index].indices[k]].quantity[p] != 0) 
+                {
+                    cout<<cname[p]<<" "<<arbitrage[arbitrage_array[index].indices[k]].quantity[p]<<" ";
                 } 
             }
-            if(arbitrage[k].otype == 's'){
-                arbitrage[k].otype='b';
+            if(arbitrage[arbitrage_array[index].indices[k]].otype == 's')
+            {
+                arbitrage[arbitrage_array[index].indices[k]].otype='b';
             }
-            else{
-                arbitrage[k].otype='s';
+            else
+            {
+                arbitrage[arbitrage_array[index].indices[k]].otype='s';
             }
-            cout<<arbitrage[k].netprice<<" "<<arbitrage[k].otype<<"\r"<<endl;
+            cout<<arbitrage[arbitrage_array[index].indices[k]].netprice<<" "<<arbitrage[arbitrage_array[index].indices[k]].otype<<"\r"<<endl;
             arbitrage.erase(arbitrage.begin() + arbitrage_array[index].indices[k]);
         }
-        cout<<maxprofit<<"\r"<<endl;
+        totalprofit+=maxprofit;
     }
     }
-    if(profit0){cout<<0;}
+    cout<<totalprofit<<"\r"<<endl;
 }
 
-int main(int argc, char* argv[]) {
-
+int main(int argc, char* argv[]) 
+{
     Receiver rcv;
     // sleep(5);
 
@@ -445,11 +510,7 @@ int main(int argc, char* argv[]) {
             break;        
 
         case 2:
-<<<<<<< HEAD
-            while (true)
-=======
             while(true)
->>>>>>> 95aee57f0586b9053335b96934e99be38abee67e
             {
                 string message = rcv.readIML();
                 auto endmarker = message.end();
