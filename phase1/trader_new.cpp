@@ -52,7 +52,6 @@ void process(string message)
     previo = preprevio;
     for (auto order : orders)
     {   
-
         string name, price;
         char type;
         auto it = order.begin();
@@ -127,7 +126,6 @@ void process(string message)
 
                 else if (type == 's')
                 {
-
                     if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price <= integer_price))
                     {
                         cout<<"No Trade\r"<<endl;
@@ -444,11 +442,14 @@ int main(int argc, char* argv[]) {
                 process(message);
                 if (*endmarker == '$') break;
             }
-            break;
-        
+            break;        
 
         case 2:
+<<<<<<< HEAD
             while (true)
+=======
+            while(true)
+>>>>>>> 95aee57f0586b9053335b96934e99be38abee67e
             {
                 string message = rcv.readIML();
                 auto endmarker = message.end();
@@ -463,6 +464,5 @@ int main(int argc, char* argv[]) {
             break;
     }
     
-
     return 0;
 }
