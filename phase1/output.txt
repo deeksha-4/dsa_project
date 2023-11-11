@@ -3,8 +3,7 @@ No Trade
 No Trade
 No Trade
 No Trade
-Y -1 X 1 10 s
-Z 1 X -1 10 s
-Y 1 Z -1 -15 s
-No Trade
-5
+A 2 B 1 10 b
+B 1 10 s
+A 2 15 s
+15
