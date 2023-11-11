@@ -1,0 +1,5 @@
+No Trade
+ASML 1 120 1 s
+ASML 1 100 1 b
+No Trade
+20
