@@ -386,17 +386,20 @@ void processtwo(string message)
                 for(int k = 0 ; k < cname.size(); k++)
                 {
                     for (int j = 0; j < res[i].size(); j++)
-                    {   if(arbitrage[res[i][j]].otype=='b'){
+                    {   
+                        if(arbitrage[res[i][j]].otype=='b'){
                             sum[k] += arbitrage[res[i][j]].quantity[k];
                         }
                         else{
                             sum[k] -= arbitrage[res[i][j]].quantity[k];
                         }
                     }
-                    if (type=='b'){
+                    if (type=='b')
+                    {
                         sum[k] += quantity[k];
                     }
-                    else{
+                    else
+                    {
                         sum[k] -= quantity[k];
                     }
                     if(sum[k]!=0)
@@ -414,7 +417,8 @@ void processtwo(string message)
                 }
 
                 if(type == 'b') profit += nprice;
-                else if(type == 's') profit -= nprice;
+                else if(type == 's') profit -= nprice; 
+
                 if (profit > 0) 
                 {
                     sumbool2 = 1; 
@@ -483,7 +487,327 @@ void processtwo(string message)
             cout<<arbitrage[arbitrage_array[index].indices[k]].netprice<<" "<<arbitrage[arbitrage_array[index].indices[k]].otype<<"\r"<<endl;
             arbitrage.erase(arbitrage.begin() + arbitrage_array[index].indices[k]);
         }
-        totalprofit+=maxprofit;
+        totalprofit += maxprofit;
+    }
+    }
+    cout<<totalprofit<<"\r"<<endl;
+}
+
+class newarbitorder{
+    public:
+    vector<int> quantity;
+    int netprice;
+    int netquantity;
+    char otype;
+};
+
+class new_possible_arbitage{
+    public:
+    vector<int> indices;
+    int price;
+};
+
+vector<newarbitorder> orderbook;
+
+vector<string> dname;
+
+void processthree(string message)
+{
+    vector<string> orders = extract_orders(message);
+    orders[0] = previo + orders[0];
+    previo = preprevio;
+    bool profit0 = 1;
+    int totalprofit=0;
+    for (auto order : orders)
+    {
+        vector<new_possible_arbitage> new_arbitrage_array;
+        string name, netprice;
+        vector<int> quantity(dname.size(),0);
+        char type;
+        bool arbitchance=1;
+        auto it = order.begin();
+        auto ite = order.end()-2;
+        type = *ite;
+        ite = ite-2;
+        string temp;
+        while(*ite != ' ')
+        {
+            temp.push_back(*ite);
+            ite--;
+        }
+
+        ite--;
+
+        for(int i = temp.size(); i > 0; i--)
+        {
+            netprice.push_back(temp[i-1]);
+        }
+
+        int nquantity = stoi(netprice);
+
+        temp = ""; netprice = "";
+
+        while(*ite != ' ')
+        {
+            temp.push_back(*ite);
+            ite--;
+        }
+
+        for(int i = temp.size(); i > 0; i--)
+        {
+            netprice.push_back(temp[i-1]);
+        }
+
+        int nprice = stoi(netprice);
+
+        while(it < ite)
+        {   
+            string tempname;
+            while(*it != ' ')
+            {
+                tempname.push_back(*it);
+                it++;
+            }
+            int namefound = -1;
+            for(int i = 0; i < dname.size(); i++)
+            {
+                if(dname[i] == tempname)
+                {
+                    namefound = i;
+                    break;
+                }
+            }
+            it++;
+            string tempq;
+            while(*it != ' ')
+            {   
+                tempq.push_back(*it);
+                it++;
+            }
+            if (namefound == -1)
+            {
+                dname.push_back(tempname);
+                arbitchance = 0;
+                quantity.push_back(stoi(tempq));
+            }
+            else
+            { 
+                quantity[namefound] = stoi(tempq);
+            }
+            it++;
+        }
+        if(arbitchance == 0)
+        {   
+            // since new company appeared, matching is also not possible
+            newarbitorder newa;
+            newa.quantity = quantity;
+            newa.netprice = nprice;
+            newa.netquantity = nquantity;
+            newa.otype = type;
+            orderbook.push_back(newa);
+            cout<<"No Trade"<<"\r"<<endl;
+            for(int l = 0; l < orderbook.size(); l++)
+            {   
+                while(orderbook[l].quantity.size() < dname.size()){
+                    orderbook[l].quantity.push_back(0);
+                }
+            }
+        }
+        else
+        {   
+            bool done = 0, ch = 1;
+            int buyfound = -1, sellfound = -1;
+            // have to check for match first
+            for (int i = 0; i < orderbook.size(); ++i)
+            {
+                if (orderbook[i].quantity == quantity)
+                {                    
+                    if (orderbook[i].otype == 'b')
+                    {
+                        buyfound = i;
+                    }
+                    if (orderbook[i].otype == 's')
+                    {
+                        sellfound = i;
+                    }
+                }
+                if (buyfound != -1 && sellfound != -1) break;
+            }
+            if (type == 'b')
+            {
+                if (buyfound != -1)
+                {
+                    if (orderbook[buyfound].netprice >= nprice)
+                    {
+                        // incoming order dies
+                        cout<<"No Trade\r"<<endl;
+                        done = 1;
+                        ch = 0;
+                    }
+                    else
+                    {
+                        orderbook.erase(orderbook.begin() + buyfound);
+                        // deleting the old one so that i consider the new one for profit calc
+                        ch = 0;
+                    }
+                }
+                if (ch && sellfound != -1)
+                {
+                    if (orderbook[sellfound].netprice == nprice)
+                    {
+                        // new one cancels out old one. both die
+                        orderbook.erase(orderbook.begin() + sellfound);
+                        cout<<"No Trade\r"<<endl;
+                        done = 1;                        
+                    }
+                }
+            }
+            else if (type == 's')
+            {
+                if (sellfound != -1)
+                {
+                    if (orderbook[sellfound].netprice <= nprice)
+                    {
+                        // incoming order dies
+                        cout<<"No Trade\r"<<endl;
+                        done = 1;
+                        ch = 0;
+                    }
+                    else
+                    {
+                        orderbook.erase(orderbook.begin() + sellfound);
+                        // deleting the old one so that i consider the new one for profit calc
+                        ch = 0;
+                    }
+                }
+                if (ch && buyfound != -1)
+                {
+                    if (orderbook[buyfound].netprice == nprice)
+                    {
+                        // new one cancels out old one. both die
+                        orderbook.erase(orderbook.begin() + buyfound);
+                        cout<<"No Trade\r"<<endl;
+                        done = 1;                        
+                    }
+                }
+            }
+
+            if (done) continue;
+
+            vector<vector<int>> res = subsets(orderbook.size());
+            bool sumbool2 =0; 
+
+            for (int i = 0; i < res.size(); i++) 
+            {
+                vector<int> sum(dname.size(),0);
+                bool sumbool = 0;
+                int profit = 0;
+                for(int k = 0 ; k < dname.size(); k++)
+                {
+                    for (int j = 0; j < res[i].size(); j++)
+                    {   
+                        if(orderbook[res[i][j]].otype=='b'){
+                            sum[k] += orderbook[res[i][j]].quantity[k];
+                        }
+                        else{
+                            sum[k] -= orderbook[res[i][j]].quantity[k];
+                        }
+                    }
+                    if (type=='b')
+                    {
+                        sum[k] += quantity[k];
+                    }
+                    else
+                    {
+                        sum[k] -= quantity[k];
+                    }
+                    if(sum[k]!=0)
+                    {
+                        sumbool = 1; 
+                        break;
+                    }
+                }
+                if (sumbool) continue;
+
+                for (int j = 0; j < res[i].size(); j++)
+                {
+                    if (orderbook[res[i][j]].otype == 'b') profit += orderbook[res[i][j]].netprice;
+                    else if (orderbook[res[i][j]].otype == 's') profit -= orderbook[res[i][j]].netprice;
+                }
+
+                if(type == 'b') profit += nprice;
+                else if(type == 's') profit -= nprice; 
+
+                if (profit > 0) 
+                {
+                    sumbool2 = 1; 
+                    new_possible_arbitage newpa;
+                    newpa.indices = res[i];
+                    newpa.price = profit;
+                    new_arbitrage_array.push_back(newpa);
+                }
+            }
+
+            if (sumbool2 == 0)
+            {
+                newarbitorder newa;
+                newa.quantity = quantity;
+                newa.netprice = nprice;
+                newa.otype = type;
+                newa.netquantity = nquantity;
+                orderbook.push_back(newa);
+                cout<<"No Trade"<<"\r"<<endl;
+            }
+        
+
+        int maxprofit = 0;
+        int index;
+
+        if (new_arbitrage_array.size()==0) continue;
+        else{profit0 = 0;}
+
+        for (int l = 0; l < new_arbitrage_array.size(); l++)
+        {
+            if(new_arbitrage_array[l].price > maxprofit)
+            {
+                maxprofit = new_arbitrage_array[l].price;
+                index = l;
+            }
+        }
+
+        for(int p = 0; p < dname.size(); p++)
+        {
+            if(quantity[p] != 0)
+            {
+                cout<<dname[p]<<" "<<quantity[p]<<" ";
+            }
+        }
+        if(type == 's') type = 'b';
+        else type = 's';
+        
+        cout<<nprice<<" "<<type<<"\r"<<endl;
+
+        for (int k = new_arbitrage_array[index].indices.size()-1; k >= 0; k--)
+        {
+            for (int p = 0; p < dname.size(); p++)
+            {
+                if (orderbook[new_arbitrage_array[index].indices[k]].quantity[p] != 0) 
+                {
+                    cout<<dname[p]<<" "<<orderbook[new_arbitrage_array[index].indices[k]].quantity[p]<<" ";
+                } 
+            }
+            if(orderbook[new_arbitrage_array[index].indices[k]].otype == 's')
+            {
+                orderbook[new_arbitrage_array[index].indices[k]].otype='b';
+            }
+            else
+            {
+                orderbook[new_arbitrage_array[index].indices[k]].otype='s';
+            }
+            cout<<orderbook[new_arbitrage_array[index].indices[k]].netprice<<" "<<orderbook[new_arbitrage_array[index].indices[k]].otype<<"\r"<<endl;
+            orderbook.erase(orderbook.begin() + new_arbitrage_array[index].indices[k]);
+        }
+        totalprofit += maxprofit;
     }
     }
     cout<<totalprofit<<"\r"<<endl;
@@ -521,7 +845,14 @@ int main(int argc, char* argv[])
             break;
 
         case 3:
-            // part3 
+            while(true)
+            {
+                string message = rcv.readIML();
+                auto endmarker = message.end();
+                --endmarker;
+                processthree(message);
+                if (*endmarker == '$') break;
+            }
             break;
     }
     
