@@ -1,579 +1,323 @@
-// map.h
+// Debugging map implementation -*- C++ -*-
 
-// C++ Program to implement Map class(using AVL tree)
-// This is a header file map.h and doesnot contain main()
+// Copyright (C) 2003, 2004
+// Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 2, or (at your option)
+// any later version.
 
-#include <iostream>
-using namespace std;
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 
-// Custom Map Class
-class Map {
-private:
-	Map* iterator(int first)
-	{
-		// A temporary variable created
-		// so that we do not
-		// lose the "root" of the tree
-		Map* temp = root;
+// You should have received a copy of the GNU General Public License along
+// with this library; see the file COPYING.  If not, write to the Free
+// Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
 
-		// Stop only when either the key is found
-		// or we have gone further the leaf node
-		while (temp != nullptr &&
-			temp->first != first) {
+// As a special exception, you may use this file as part of a free software
+// library without restriction.  Specifically, if other files instantiate
+// templates or use macros or inline functions from this file, or you compile
+// this file and link it with other files to produce an executable, this
+// file does not by itself cause the resulting executable to be covered by
+// the GNU General Public License.  This exception does not however
+// invalidate any other reasons why the executable file might be covered by
+// the GNU General Public License.
 
-			// Go to left if key is less than
-			// the key of the traversed node
-			if (first < temp->first) {
-				temp = temp->left;
-			}
+#ifndef _GLIBCXX_DEBUG_MAP_H
+#define _GLIBCXX_DEBUG_MAP_H 1
 
-			// Go to right otherwise
-			else {
-				temp = temp->right;
-			}
-		}
-		// If there doesn't exist any element
-		// with first as key, nullptr is returned
-		return temp;
-	}
+#include <debug/safe_sequence.h>
+#include <debug/safe_iterator.h>
+#include <utility>
 
-	// Returns the pointer to element
-	// whose key matches first.
-	// Specially created for search method
-	// (because search() is const qualified).
-	const Map* iterator(int first) const
-	{
-		Map* temp = root;
-		while (temp != nullptr
-			&& temp->first != first) {
-			if (first < temp->first) {
-				temp = temp->left;
-			}
-			else {
-				temp = temp->right;
-			}
-		}
-		return temp;
-	}
+namespace __gnu_debug_def
+{
+  template<typename _Key, typename _Tp, typename _Compare = std::less<_Key>,
+       typename _Allocator = std::allocator<std::pair<const _Key, _Tp> > >
+    class map
+    : public _GLIBCXX_STD::map<_Key, _Tp, _Compare, _Allocator>,
+      public __gnu_debug::_Safe_sequence<map<_Key, _Tp, _Compare, _Allocator> >
+    {
+      typedef _GLIBCXX_STD::map<_Key, _Tp, _Compare, _Allocator> _Base;
+      typedef __gnu_debug::_Safe_sequence<map> _Safe_base;
 
-	// The const property is used to keep the
-	// method compatible with the method "const
-	// int&[]operator(int) const"
-	// Since we are not allowed to change
-	// the class attributes in the method
-	// "const int&[]operator(int) const"
-	// we have to assure the compiler that
-	// method called(i.e "search") inside it
-	// doesn't change the attributes of class
-	const int search(int first) const
-	{
-		const Map* temp = iterator(first);
-		if (temp != nullptr) {
-			return temp->second;
-		}
-		return 0;
-	}
+    public:
+      // types:
+      typedef _Key                                  key_type;
+      typedef _Tp                                   mapped_type;
+      typedef std::pair<const _Key, _Tp>            value_type;
+      typedef _Compare                              key_compare;
+      typedef _Allocator                            allocator_type;
+      typedef typename _Allocator::reference        reference;
+      typedef typename _Allocator::const_reference  const_reference;
 
-	// Utility function to return the Map* object
-	// with its members initialized
-	// to default values except the key
-	Map* create(int first)
-	{
-		Map* newnode = (Map*)malloc(sizeof(Map));
-		newnode->first = first;
-		newnode->second = 0;
-		newnode->left = nullptr;
-		newnode->right = nullptr;
-		newnode->par = nullptr;
+      typedef __gnu_debug::_Safe_iterator<typename _Base::iterator, map>
+                                                    iterator;
+      typedef __gnu_debug::_Safe_iterator<typename _Base::const_iterator, map>
+                                                    const_iterator;
 
-		// Depth of a newnode shall be 1
-		// and not zero to differentiate
-		// between no child (which returns
-		// nullptr) and having child(returns 1)
-		newnode->depth = 1;
-		return newnode;
-	}
+      typedef typename _Base::size_type             size_type;
+      typedef typename _Base::difference_type       difference_type;
+      typedef typename _Allocator::pointer          pointer;
+      typedef typename _Allocator::const_pointer    const_pointer;
+      typedef std::reverse_iterator<iterator>       reverse_iterator;
+      typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-	// All the rotation operation are performed
-	// about the node itself
-	// Performs all the linking done when there is
-	// clockwise rotation performed at node "x"
-	void right_rotation(Map* x)
-	{
-		Map* y = x->left;
-		x->left = y->right;
-		if (y->right != nullptr) {
-			y->right->par = x;
-		}
-		if (x->par != nullptr && x->par->right == x) {
-			x->par->right = y;
-		}
-		else if (x->par != nullptr && x->par->left == x) {
-			x->par->left = y;
-		}
-		y->par = x->par;
-		y->right = x;
-		x->par = y;
-	}
+      using _Base::value_compare;
 
-	// Performs all the linking done when there is
-	// anti-clockwise rotation performed at node "x"
-	void left_rotation(Map* x)
-	{
-		Map* y = x->right;
-		x->right = y->left;
-		if (y->left != nullptr) {
-			y->left->par = x;
-		}
-		if (x->par != nullptr && x->par->left == x) {
-			x->par->left = y;
-		}
-		else if (x->par != nullptr && x->par->right == x) {
-			x->par->right = y;
-		}
-		y->par = x->par;
-		y->left = x;
-		x->par = y;
-	}
+      // 23.3.1.1 construct/copy/destroy:
+      explicit map(const _Compare& __comp = _Compare(),
+           const _Allocator& __a = _Allocator())
+      : _Base(__comp, __a) { }
 
-	// Draw the initial and final graph of each
-	// case(take case where every node has two child)
-	// and update the nodes depth before any rotation
-	void helper(Map* node)
-	{
-		// If left skewed
-		if (depthf(node->left)
-			- depthf(node->right) > 1) {
+      template<typename _InputIterator>
+        map(_InputIterator __first, _InputIterator __last,
+        const _Compare& __comp = _Compare(),
+        const _Allocator& __a = _Allocator())
+    : _Base(__gnu_debug::__check_valid_range(__first, __last), __last,
+        __comp, __a), _Safe_base() { }
 
-			// If "depth" of left subtree of
-			// left child of "node" is
-			// greater than right
-			// subtree of left child of "node"
-			if (depthf(node->left->left)
-				> depthf(node->left->right)) {
-				node->depth
-					= max(depthf(node->right) + 1,
-						depthf(node->left->right) + 1);
-				node->left->depth
-					= max(depthf(node->left->left) + 1,
-						depthf(node) + 1);
-				right_rotation(node);
-			}
+      map(const map<_Key,_Tp,_Compare,_Allocator>& __x)
+      : _Base(__x), _Safe_base() { }
 
-			// If "depth" of right subtree
-			// of left child of "node" is
-			// greater than
-			// left subtree of left child
-			else {
-				node->left->depth = max(
-					depthf(node->left->left) + 1,
-					depthf(node->left->right->left)
-					+ 1);
-				node->depth
-					= max(depthf(node->right) + 1,
-					depthf(node->left->right->right) + 1);
-				node->left->right->depth
-					= max(depthf(node) + 1,
-						depthf(node->left) + 1);
-				left_rotation(node->left);
-				right_rotation(node);
-			}
-		}
+      map(const _Base& __x) : _Base(__x), _Safe_base() { }
 
-		// If right skewed
-		else if (depthf(node->left)
-				- depthf(node->right) < -1) {
+      ~map() { }
 
-			// If "depth" of right subtree of right
-			// child of "node" is greater than
-			// left subtree of right child
-			if (depthf(node->right->right)
-				> depthf(node->right->left)) {
-				node->depth
-					= max(depthf(node->left) + 1,
-						depthf(node->right->left) + 1);
-				node->right->depth
-					= max(depthf(node->right->right) + 1,
-						depthf(node) + 1);
-				left_rotation(node);
-			}
+      map<_Key,_Tp,_Compare,_Allocator>&
+      operator=(const map<_Key,_Tp,_Compare,_Allocator>& __x)
+      {
+    *static_cast<_Base*>(this) = __x;
+    this->_M_invalidate_all();
+    return *this;
+      }
 
-			// If "depth" of left subtree
-			// of right child of "node" is
-			// greater than that of right
-			// subtree of right child of "node"
-			else {
-				node->right->depth = max(
-					depthf(node->right->right) + 1,
-					depthf(node->right->left->right) + 1);
-				node->depth = max(
-					depthf(node->left) + 1,
-					depthf(node->right->left->left) + 1);
-				node->right->left->depth
-					= max(depthf(node) + 1,
-						depthf(node->right) + 1);
-				right_rotation(node->right);
-				left_rotation(node);
-			}
-		}
-	}
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 133. map missing get_allocator()
+      using _Base::get_allocator;
 
-	// Balancing the tree about the "node"
-	void balance(Map* node)
-	{
-		while (node != root) {
-			int d = node->depth;
-			node = node->par;
-			if (node->depth < d + 1) {
-				node->depth = d + 1;
-			}
-			if (node == root
-				&& depthf(node->left) 
-				- depthf(node->right) > 1) {
-				if (depthf(node->left->left)
-					> depthf(node->left->right)) {
-					root = node->left;
-				}
-				else {
-					root = node->left->right;
-				}
-				helper(node);
-				break;
-			}
-			else if (node == root
-					&& depthf(node->left) 
-					- depthf(node->right)
-							< -1) {
-				if (depthf(node->right->right)
-					> depthf(node->right->left)) {
-					root = node->right;
-				}
-				else {
-					root = node->right->left;
-				}
-				helper(node);
-				break;
-			}
-			helper(node);
-		}
-	}
+      // iterators:
+      iterator 
+      begin()
+      { return iterator(_Base::begin(), this); }
 
-	// Utility method to return the
-	// "depth" of the subtree at the "node"
-	int depthf(Map* node)
-	{
-		if (node == nullptr)
+      const_iterator
+      begin() const
+      { return const_iterator(_Base::begin(), this); }
 
-			// If it is null node
-			return 0;
-		return node->depth;
-	}
+      iterator
+      end()
+      { return iterator(_Base::end(), this); }
 
-	// Function to insert a value in map
-	Map* insert(int first)
-	{
-		cnt++;
-		Map* newnode = create(first);
-		if (root == nullptr) {
-			root = newnode;
-			return root;
-		}
-		Map *temp = root, *prev = nullptr;
-		while (temp != nullptr) {
-			prev = temp;
-			if (first < temp->first) {
-				temp = temp->left;
-			}
-			else if (first > temp->first) {
-				temp = temp->right;
-			}
-			else {
-				free(newnode);
-				cnt--;
-				return temp;
-			}
-		}
-		if (first < prev->first) {
-			prev->left = newnode;
-		}
-		else {
-			prev->right = newnode;
-		}
-		newnode->par = prev;
-		balance(newnode);
-		return newnode;
-	}
+      const_iterator
+      end() const
+      { return const_iterator(_Base::end(), this); }
 
-	// Returns the previous node in
-	// inorder traversal of the AVL Tree.
-	Map* inorderPredecessor(Map* head)
-	{
-		if (head == nullptr)
-			return head;
-		while (head->right != nullptr) {
-			head = head->right;
-		}
-		return head;
-	}
+      reverse_iterator
+      rbegin()
+      { return reverse_iterator(end()); }
 
-	// Returns the next node in
-	// inorder traversal of the AVL Tree.
-	Map* inorderSuccessor(Map* head)
-	{
-		if (head == nullptr)
-			return head;
-		while (head->left != nullptr) {
-			head = head->left;
-		}
-		return head;
-	}
+      const_reverse_iterator
+      rbegin() const
+      { return const_reverse_iterator(end()); }
 
-public:
-	// Root" is kept static because it's a class
-	// property and not an instance property
-	static class Map* root;
-	static int cnt;
+      reverse_iterator
+      rend()
+      { return reverse_iterator(begin()); }
 
-	// "first" is key and "second" is value
-	Map *left, *right, *par;
-	int first, second, depth;
+      const_reverse_iterator
+      rend() const
+      { return const_reverse_iterator(begin()); }
 
-	// overloaded [] operator for assignment or
-	// inserting a key-value pairs in the map
-	// since it might change the members of
-	// the class therefore this is
-	// invoked when any assignment is done
-	int& operator[](int key) {
-		return insert(key)->second;
-	}
+      // capacity:
+      using _Base::empty;
+      using _Base::size;
+      using _Base::max_size;
 
-	// Since we have two methods with
-	// the same name "[]operator(int)" and
-	// methods/functions cannot be
-	// distinguished by their return types
-	// it is mandatory to include a const
-	// qualifier at the end of any of the methods
+      // 23.3.1.2 element access:
+      using _Base::operator[];
 
-	// This method will be called from a const
-	// reference to the object of Map class
+      // modifiers:
+      std::pair<iterator, bool>
+      insert(const value_type& __x)
+      {
+    typedef typename _Base::iterator _Base_iterator;
+    std::pair<_Base_iterator, bool> __res = _Base::insert(__x);
+    return std::pair<iterator, bool>(iterator(__res.first, this),
+                     __res.second);
+      }
 
-	// It will not be called for assignment
-	// because it doesn't allow to change
-	// member variables
+      iterator
+      insert(iterator __position, const value_type& __x)
+      {
+    __glibcxx_check_insert(__position);
+    return iterator(_Base::insert(__position.base(), __x), this);
+      }
 
-	// We cannot make it return by reference
-	// because the variable "temp" returned
-	// by the "search" method is
-	// statically allocated and therefore
-	// it's been destroyed when it is called out
-	const int operator[](int key) const
-	{
-		return search(key);
-	}
+      template<typename _InputIterator>
+        void
+        insert(_InputIterator __first, _InputIterator __last)
+        {
+      __glibcxx_check_valid_range(__first, __last);
+      _Base::insert(__first, __last);
+    }
 
-	// Count returns whether an element
-	// exists in the Map or not
-	int count(int first)
-	{
-		Map* temp = iterator(first);
-		if (temp != nullptr) {
-			return 1;
-		}
-		return 0;
-	}
+      void
+      erase(iterator __position)
+      {
+    __glibcxx_check_erase(__position);
+    __position._M_invalidate();
+    _Base::erase(__position.base());
+      }
 
-	// Returns number of elements in the map
-	int size(void) {
-		return cnt;
-	}
+      size_type
+      erase(const key_type& __x)
+      {
+    iterator __victim = find(__x);
+    if (__victim == end())
+      return 0;
+    else
+    {
+      __victim._M_invalidate();
+      _Base::erase(__victim.base());
+      return 1;
+    }
+      }
 
-	// Removes an element given its key
-	void erase(int first, Map* temp = root)
-	{
-		Map* prev = nullptr;
-		cnt--;
-		while (temp != nullptr &&
-			temp->first != first) {
-			prev = temp;
-			if (first < temp->first) {
-				temp = temp->left;
-			}
-			else if (first > temp->first) {
-				temp = temp->right;
-			}
-		}
-		if (temp == nullptr) {
-			cnt++;
-			return;
-		}
-		if (cnt == 0 && temp == root) {
-			free(temp);
-			root = nullptr;
-			return;
-		}
-		Map* l
-			= inorderPredecessor(temp->left);
-		Map* r
-			= inorderSuccessor(temp->right);
-		if (l == nullptr && r == nullptr) {
-			if (prev == nullptr) {
-				root = nullptr;
-			}
-			else {
-				if (prev->left == temp) {
-					prev->left = nullptr;
-				}
-				else {
-					prev->right = nullptr;
-				}
-				free(temp);
-				balance(prev);
-			}
-			return;
-		}
-		Map* start;
-		if (l != nullptr) {
-			if (l == temp->left) {
-				l->right = temp->right;
-				if (l->right != nullptr) {
-					l->right->par = l;
-				}
-				start = l;
-			}
-			else {
-				if (l->left != nullptr) {
-					l->left->par = l->par;
-				}
-				start = l->par;
-				l->par->right = l->left;
-				l->right = temp->right;
-				l->par = nullptr;
-				if (l->right != nullptr) {
-					l->right->par = l;
-				}
-				l->left = temp->left;
-				temp->left->par = l;
-			}
-			if (prev == nullptr) {
-				root = l;
-			}
-			else {
-				if (prev->left == temp) {
-					prev->left = l;
-					l->par = prev;
-				}
-				else {
-					prev->right = l;
-					l->par = prev;
-				}
-				free(temp);
-			}
-			balance(start);
-			return;
-		}
-		else {
-			if (r == temp->right) {
-				r->left = temp->left;
-				if (r->left != nullptr) {
-					r->left->par = r;
-				}
-				start = r;
-			}
-			else {
-				if (r->right != nullptr) {
-					r->right->par = r->par;
-				}
-				start = r->par;
-				r->par->left = r->right;
-				r->left = temp->left;
-				r->par = nullptr;
-				if (r->left != nullptr) {
-					r->left->par = r;
-				}
-				r->right = temp->right;
-				temp->right->par = r;
-			}
-			if (prev == nullptr) {
-				root = r;
-			}
-			else {
-				if (prev->right == temp) {
-					prev->right = r;
-					r->par = prev;
-				}
-				else {
-					prev->left = r;
-					r->par = prev;
-				}
-				free(temp);
-			}
-			balance(start);
-			return;
-		}
-	}
-	
-	// Returns if the map is empty or not
-	bool empty(void)
-	{
-		if (root == nullptr)
-			return true;
-		return false;
-	}
-	
-	// Given the key of an element it updates
-	// the value of the key
-	void update(int first, int second)
-	{
-		Map* temp = iterator(first);
-		if (temp != nullptr) {
-			temp->second = second;
-		}
-	}
+      void
+      erase(iterator __first, iterator __last)
+      {
+    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+    // 151. can't currently clear() empty container
+    __glibcxx_check_erase_range(__first, __last);
+    while (__first != __last)
+      this->erase(__first++);
+      }
 
-	// Deleting the root of
-	// the tree each time until the map
-	// is not empty
-	void clear(void)
-	{
-		while (root != nullptr) {
-			erase(root->first);
-		}
-	}
+      void
+      swap(map<_Key,_Tp,_Compare,_Allocator>& __x)
+      {
+    _Base::swap(__x);
+    this->_M_swap(__x);
+      }
 
-	// Inorder traversal of the AVL tree
-	void iterate(Map* head = root)
-	{
-		if (root == nullptr)
-			return;
-		if (head->left != nullptr) {
-			iterate(head->left);
-		}
-		cout << head->first << ' ';
-		if (head->right != nullptr) {
-			iterate(head->right);
-		}
-	}
+      void
+      clear()
+      { this->erase(begin(), end()); }
 
-	// Returns a pointer/iterator to the element
-	// whose key is first
-	Map* find(int first) {
-		return iterator(first);
-	}
+      // observers:
+      using _Base::key_comp;
+      using _Base::value_comp;
 
-	// Overloaded insert method,
-	// takes two parameters - key and value
-	void insert(int first, int second)
-	{
-		Map* temp = iterator(first);
-		if (temp == nullptr) {
-			insert(first)->second = second;
-		}
-		else {
-			temp->second = second;
-		}
-	}
-};
+      // 23.3.1.3 map operations:
+      iterator
+      find(const key_type& __x)
+      { return iterator(_Base::find(__x), this); }
 
-Map* Map::root = nullptr;
-int Map::cnt = 0;
+      const_iterator
+      find(const key_type& __x) const
+      { return const_iterator(_Base::find(__x), this); }
 
+      using _Base::count;
+
+      iterator
+      lower_bound(const key_type& __x)
+      { return iterator(_Base::lower_bound(__x), this); }
+
+      const_iterator
+      lower_bound(const key_type& __x) const
+      { return const_iterator(_Base::lower_bound(__x), this); }
+
+      iterator
+      upper_bound(const key_type& __x)
+      { return iterator(_Base::upper_bound(__x), this); }
+
+      const_iterator
+      upper_bound(const key_type& __x) const
+      { return const_iterator(_Base::upper_bound(__x), this); }
+
+      std::pair<iterator,iterator>
+      equal_range(const key_type& __x)
+      {
+    typedef typename _Base::iterator _Base_iterator;
+    std::pair<_Base_iterator, _Base_iterator> __res =
+    _Base::equal_range(__x);
+    return std::make_pair(iterator(__res.first, this),
+                  iterator(__res.second, this));
+      }
+
+      std::pair<const_iterator,const_iterator>
+      equal_range(const key_type& __x) const
+      {
+    typedef typename _Base::const_iterator _Base_const_iterator;
+    std::pair<_Base_const_iterator, _Base_const_iterator> __res =
+    _Base::equal_range(__x);
+    return std::make_pair(const_iterator(__res.first, this),
+                  const_iterator(__res.second, this));
+      }
+
+      _Base& 
+      _M_base() { return *this; }
+
+      const _Base&
+      _M_base() const { return *this; }
+
+    private:
+      void
+      _M_invalidate_all()
+      {
+    typedef typename _Base::const_iterator _Base_const_iterator;
+    typedef __gnu_debug::_Not_equal_to<_Base_const_iterator> _Not_equal;
+    this->_M_invalidate_if(_Not_equal(_M_base().end()));
+      }
+    };
+
+  template<typename _Key,typename _Tp,typename _Compare,typename _Allocator>
+    inline bool
+    operator==(const map<_Key,_Tp,_Compare,_Allocator>& __lhs,
+           const map<_Key,_Tp,_Compare,_Allocator>& __rhs)
+    { return __lhs._M_base() == __rhs._M_base(); }
+
+  template<typename _Key,typename _Tp,typename _Compare,typename _Allocator>
+    inline bool
+    operator!=(const map<_Key,_Tp,_Compare,_Allocator>& __lhs,
+           const map<_Key,_Tp,_Compare,_Allocator>& __rhs)
+    { return __lhs._M_base() != __rhs._M_base(); }
+
+  template<typename _Key,typename _Tp,typename _Compare,typename _Allocator>
+    inline bool
+    operator<(const map<_Key,_Tp,_Compare,_Allocator>& __lhs,
+          const map<_Key,_Tp,_Compare,_Allocator>& __rhs)
+    { return __lhs._M_base() < __rhs._M_base(); }
+
+  template<typename _Key,typename _Tp,typename _Compare,typename _Allocator>
+    inline bool
+    operator<=(const map<_Key,_Tp,_Compare,_Allocator>& __lhs,
+           const map<_Key,_Tp,_Compare,_Allocator>& __rhs)
+    { return __lhs._M_base() <= __rhs._M_base(); }
+
+  template<typename _Key,typename _Tp,typename _Compare,typename _Allocator>
+    inline bool
+    operator>=(const map<_Key,_Tp,_Compare,_Allocator>& __lhs,
+           const map<_Key,_Tp,_Compare,_Allocator>& __rhs)
+    { return __lhs._M_base() >= __rhs._M_base(); }
+
+  template<typename _Key,typename _Tp,typename _Compare,typename _Allocator>
+    inline bool
+    operator>(const map<_Key,_Tp,_Compare,_Allocator>& __lhs,
+          const map<_Key,_Tp,_Compare,_Allocator>& __rhs)
+    { return __lhs._M_base() > __rhs._M_base(); }
+
+  template<typename _Key,typename _Tp,typename _Compare,typename _Allocator>
+    inline void
+    swap(map<_Key,_Tp,_Compare,_Allocator>& __lhs,
+     map<_Key,_Tp,_Compare,_Allocator>& __rhs)
+    { __lhs.swap(__rhs); }
+} // namespace __gnu_debug_def
+
+#endif
