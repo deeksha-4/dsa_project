@@ -73,7 +73,6 @@ void process(string message)
 
         int integer_price = stoi(price);
         bool found = 0;
-
         
         for (int i = 0; i < stocks.size(); ++i)
         {
@@ -91,7 +90,7 @@ void process(string message)
                     else if (stocks[i].buy_flag && (stocks[i].waiting_buy_price < integer_price))
                     {
                         stocks[i].waiting_buy_price = integer_price;
-
+                        stocks[i].buy_flag = 1;
                     }
                     if (stocks[i].sell_flag && stocks[i].waiting_sell_price == integer_price)
                     {
@@ -111,6 +110,7 @@ void process(string message)
                     else if (stocks[i].price >= integer_price)
                     {
                         stocks[i].waiting_buy_price = integer_price;
+                        stocks[i].buy_flag = 1;
                         cout<<"No Trade"<<"\r"<<endl;
                         break;
                     }
@@ -127,7 +127,7 @@ void process(string message)
                     else if (stocks[i].sell_flag && (stocks[i].waiting_sell_price > integer_price))
                     {
                         stocks[i].waiting_sell_price = integer_price;
-
+                        stocks[i].sell_flag = 1;
                     }
                     if (stocks[i].buy_flag && stocks[i].waiting_buy_price == integer_price)
                     {
@@ -147,10 +147,10 @@ void process(string message)
                     else if (stocks[i].price <= integer_price)
                     {   
                         stocks[i].waiting_sell_price = integer_price;
+                        stocks[i].sell_flag = 1;
                         cout<<"No Trade"<<"\r"<<endl;
                         break;
-                    }
-                    
+                    }                    
                 }
             }
         }
