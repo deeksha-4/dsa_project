@@ -9,6 +9,8 @@ class company
     int price;
     int waiting_sell_price; // -1 indicates no waiitng order
     int waiting_buy_price;
+    bool sell_flag = 0; // 1 indicates waiting order
+    bool buy_flag = 0;
 };
 
 string previo, preprevio;
@@ -81,38 +83,29 @@ void process(string message)
                 if (type == 'b')
                 {
 
-                    if (stocks[i].waiting_buy_price!=-1 && (stocks[i].waiting_buy_price >= integer_price))
+                    if (stocks[i].buy_flag && (stocks[i].waiting_buy_price >= integer_price))
                     {
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-                    else if (stocks[i].waiting_buy_price!=-1 && (stocks[i].waiting_buy_price < integer_price))
+                    else if (stocks[i].buy_flag && (stocks[i].waiting_buy_price < integer_price))
                     {
                         stocks[i].waiting_buy_price = integer_price;
 
                     }
-                    if (stocks[i].waiting_sell_price!=-1 && stocks[i].waiting_sell_price == integer_price)
+                    if (stocks[i].sell_flag && stocks[i].waiting_sell_price == integer_price)
                     {
-                        stocks[i].waiting_buy_price = -1;
-                        stocks[i].waiting_sell_price = -1;
+                        stocks[i].buy_flag = 0;
+                        stocks[i].sell_flag = 0;
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-                    // if (stocks[i].waiting_sell_price!=-1 && stocks[i].waiting_sell_price == integer_price)
-                    // {
-                    //     stocks[i].waiting_sell_price = -1;
-                    //     cout<<"No Trade\r"<<endl;
-                    //     if (stocks[i].waiting_buy_price < integer_price)
-                    //     {
-                    //         stocks[i].waiting_buy_price = -1;
-                    //     }
-                    //     break;
-                    // }
+
                     if (stocks[i].price < integer_price)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'s'<<"\r"<<endl;
                         stocks[i].price = integer_price;
-                        stocks[i].waiting_buy_price = -1;
+                        stocks[i].buy_flag = 0;
                         break;
                     }
                     else if (stocks[i].price >= integer_price)
@@ -126,40 +119,29 @@ void process(string message)
 
                 else if (type == 's')
                 {
-                    if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price <= integer_price))
+                    if (stocks[i].sell_flag && (stocks[i].waiting_sell_price <= integer_price))
                     {
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-                    else if (stocks[i].waiting_sell_price!=-1 && (stocks[i].waiting_sell_price > integer_price))
+                    else if (stocks[i].sell_flag && (stocks[i].waiting_sell_price > integer_price))
                     {
                         stocks[i].waiting_sell_price = integer_price;
 
                     }
-                    if (stocks[i].waiting_buy_price!=-1 && stocks[i].waiting_buy_price == integer_price)
+                    if (stocks[i].buy_flag && stocks[i].waiting_buy_price == integer_price)
                     {
-                        stocks[i].waiting_buy_price = -1;
-                        stocks[i].waiting_sell_price = -1;
+                        stocks[i].buy_flag = 0;
+                        stocks[i].sell_flag = 0;
                         cout<<"No Trade\r"<<endl;
                         break;
                     }
-
-                    // if (stocks[i].waiting_buy_price!=-1 && stocks[i].waiting_buy_price == integer_price)
-                    // {
-                    //     stocks[i].waiting_buy_price = -1;
-                    //     cout<<"No Trade\r"<<endl;
-                    //     if (stocks[i].waiting_sell_price > integer_price)
-                    //     {
-                    //         stocks[i].waiting_sell_price = -1;
-                    //     }
-                    //     break;
-                    // }
                     
                     if (stocks[i].price > integer_price)
                     {
                         cout<<name<<" "<<integer_price<<" "<<'b'<<"\r"<<endl;
                         stocks[i].price = integer_price;
-                        stocks[i].waiting_sell_price = -1;
+                        stocks[i].sell_flag = 0;
                         break;
                     }
                     else if (stocks[i].price <= integer_price)
