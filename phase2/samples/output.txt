@@ -1,8 +1,8 @@
 TL
-0 KarGoExpress SELL AMD $120 #32 1
-0 KarGoCorp SELL AMZN $100 #30 10
-1 KarGoCorp BUY GE $200 #20 8
-1 KarGoKrab BUY AMZN $130 #12 0
+0 KarGoExpress SELL AMD $120 #32 1.
+0 KarGoCorp SELL AMZN $100 #30 10.
+1 KarGoCorp BUY GE $200 #20 8.
+1 KarGoKrab BUY AMZN $130 #12 0.
 2 KarGoTravels BUY AMD $100 #50 10
 2 KarGoCorp BUY AMZN $50 #30 5
 3 KarGoKrab BUY AMD $130 #10 7
