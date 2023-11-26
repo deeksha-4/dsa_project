@@ -149,6 +149,27 @@ void market::start()
             }
         }
 
+        bool f = 0;
+
+        for (int l = 0; l<companies.size(); ++l)        
+        {
+            if (companies[l].name == new_order.name)
+            {
+                f = 1;
+                break;
+            }
+        }
+
+        if (!f)
+        {
+            Company c;
+            c.buy = 0;
+            c.sell = 0;
+            c.net = 0;
+            c.name = new_order.name;
+            companies.push_back(c);
+        }
+
         // first check if any trade is possible, could avoid an unnecessary push
 
         vector<candidate> possible_matches;
@@ -234,26 +255,18 @@ void market::start()
 
                 if (buyer == seller)
                 {
-                    bool found = 0;
+
                     for (int j = 0; j< companies.size(); ++j)
                     {
                         if (companies[j].name == buyer)
                         {
-                            found = 1;
+                         
                             companies[j].buy += new_order.quantity;
                             companies[j].sell += new_order.quantity;
                             break;
                         }
                     }
-                    if (!found)
-                    {
-                        Company c;
-                        c.name = buyer;
-                        c.buy = new_order.quantity;
-                        c.sell = c.buy;
-                        c.net = 0;
-                        companies.push_back(c);
-                    }
+
                 }
 
                 else
@@ -275,25 +288,6 @@ void market::start()
                             companies[j].net += new_order.quantity*possible_matches[i].order.price;
                         }
                     }
-                    if (!sf)
-                    {
-                        Company c;
-                        c.name = seller;
-                        c.net = new_order.quantity* possible_matches[i].order.price;
-                        c.buy = 0;
-                        c.sell = new_order.quantity;
-                        companies.push_back(c);
-                    }
-
-                    if (!bf)
-                    {
-                        Company c;
-                        c.name = buyer;
-                        c.net = -new_order.quantity*possible_matches[i].order.price;
-                        c.sell = 0;
-                        c.buy = new_order.quantity;
-                        companies.push_back(c);
-                    }
                 }
 
                 new_order.quantity = 0;
@@ -314,26 +308,18 @@ void market::start()
                 print(buyer, seller, possible_matches[i].order.quantity, new_order.items, possible_matches[i].order.price);
                 if (buyer == seller)
                 {
-                    bool found = 0;
+                    
                     for (int j = 0; j< companies.size(); ++j)
                     {
                         if (companies[j].name == buyer)
                         {
-                            found = 1;
+                            
                             companies[j].buy += possible_matches[i].order.quantity;
                             companies[j].sell += possible_matches[i].order.quantity;
                             break;
                         }
                     }
-                    if (!found)
-                    {
-                        Company c;
-                        c.name = buyer;
-                        c.buy = possible_matches[i].order.quantity;
-                        c.sell = c.buy;
-                        c.net = 0;
-                        companies.push_back(c);
-                    }
+
                 }
 
                 else
@@ -354,25 +340,6 @@ void market::start()
                             companies[j].sell += possible_matches[i].order.quantity;
                             companies[j].net += possible_matches[i].order.quantity*possible_matches[i].order.price;
                         }
-                    }
-                    if (!sf)
-                    {
-                        Company c;
-                        c.name = seller;
-                        c.net = possible_matches[i].order.quantity* possible_matches[i].order.price;
-                        c.buy = 0;
-                        c.sell = possible_matches[i].order.quantity;
-                        companies.push_back(c);
-                    }
-
-                    if (!bf)
-                    {
-                        Company c;
-                        c.name = buyer;
-                        c.net = -possible_matches[i].order.quantity*possible_matches[i].order.price;
-                        c.sell = 0;
-                        c.buy = possible_matches[i].order.quantity;
-                        companies.push_back(c);
                     }
                 }
             }
