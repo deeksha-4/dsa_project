@@ -646,7 +646,7 @@ int processthree(string message)
                     {
                         if (orderbook[i].quantity == quantity)
                         {     
-                            if (type == 'b')
+                            if (orderbook[i].otype == 'b')
                             {
                                 nquantity = nquantity + netquant[i];
                                 netquant.erase(netquant.begin()+i);
@@ -673,6 +673,7 @@ int processthree(string message)
                                 {
                                     nquantity = nquantity - netquant[i];
                                     orderbook.erase(orderbook.begin()+i);
+                                    netquant.erase(netquant.begin()+i);
                                 }
                             }
                             break;
@@ -685,7 +686,7 @@ int processthree(string message)
                     {
                         if (orderbook[i].quantity == quantity)
                         {     
-                            if (type == 's')
+                            if (orderbook[i].otype == 's')
                             {
                                 nquantity = nquantity + netquant[i];
                                 netquant.erase(netquant.begin()+i);
@@ -712,6 +713,7 @@ int processthree(string message)
                                 {
                                     nquantity = nquantity - netquant[i];
                                     orderbook.erase(orderbook.begin()+i);
+                                    netquant.erase(netquant.begin()+i);
                                 }
                             }
                             break;

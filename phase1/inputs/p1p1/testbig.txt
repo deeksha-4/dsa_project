@@ -562,8 +562,6 @@ AAPL 432 s#
 ASML 654 s#
 ASML 652 s#
 ASML 650 s#
-<<<<<<< HEAD:phase1/inputs/phase1part1 testcases/testbig.txt
-=======
 ASML 650 s#
 ASML 645 b#
 AAPL 430 b#
@@ -600,4 +598,3 @@ AAPL 432 s#
 ASML 654 s#
 ASML 652 s#
 ASML 650 s#
->>>>>>> c1ed738bdcdf2d1c3c9e33b6656987b6807a1bd8:phase1/inputs/file.txt

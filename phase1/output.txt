@@ -1,8 +1,601 @@
 Receiver is listening on port 8888
+ASML 650 b
+No Trade
+AAPL 430 s
+AAPL 435 s
 No Trade
 No Trade
 No Trade
-A 6 B 6 700 3 s
-A 5 B 5 300 6 b
-A 3 B 3 500 4 s
-2300
+ASML 651 s
+AAPL 432 b
+No Trade
+No Trade
+ASML 650 b
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+ASML 651 s
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 435 s
+No Trade
+No Trade
+No Trade
+No Trade
+AAPL 432 b
+No Trade
+No Trade
+No Trade
