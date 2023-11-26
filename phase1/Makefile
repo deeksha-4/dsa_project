@@ -57,4 +57,4 @@ clean_part3:
 	g++ -std=c++20 iml.cpp -o iml
 	./trader 3 > output.txt &
 	sleep 1
-	./iml inputs/p1p3/2.txt
+	./iml inputs/p1p3/data_mittal.txt

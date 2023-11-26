@@ -499,33 +499,25 @@ class newarbitorder{
     char otype;
 };
 
-vector<newarbitorder> orderbook;
-vector<int>netquantity;
-vector<string> dname;
+class new_possible_arbitrage{
+    public:
+    vector<int> quant;
+    int arbit_profit;
+};
 
-int countDigitsInBinary(int num) {
-    if (num <= 0) {
-        return 0;
-    }
-    int count = 0;
-    while (num > 0) {
-        num = num >> 1;
-        count++;
-    }
-    return count;
-}
+vector<newarbitorder> orderbook;
+vector<int>netquant;
+vector<string> dname;
 
 vector<vector<int>>createsubsets(const vector<int>& netq)
 {
     vector<vector<int>>new_possible_arbitrage;
-    int totalSubsets = 1;
     int n = netq.size();
     // Calculate the total number of subsets
     int totalSubsets = 1;
     for (int i = 0; i < n; ++i) {
         totalSubsets *= (netq[i] + 1);
     }
-    // Generate all subsets using counts of each character
    for (int i = 0; i < totalSubsets; ++i) {
         vector<int> subset;
         int temp = i;
@@ -536,7 +528,6 @@ vector<vector<int>>createsubsets(const vector<int>& netq)
         }
         new_possible_arbitrage.push_back(subset);
     }
-
     return new_possible_arbitrage;
 }
 
@@ -548,6 +539,7 @@ int processthree(string message)
     int totalprofit=0;
     for (auto order : orders)
     {
+        vector<new_possible_arbitrage> new_arbitrage_array;
         string name, netprice, netquantity;
         vector<int> quantity(dname.size(),0);
         char type;
@@ -626,13 +618,13 @@ int processthree(string message)
             it++;
         }
         if(arbitchance == 0)
-        {  
+        {   
             newarbitorder newa;
             newa.quantity = quantity;
             newa.netprice = nprice;
-            netquantity.push_back(nquantity);
+            netquant.push_back(nquantity);
             newa.otype = type;
-            orderbook.push_back(newa); 
+            orderbook.push_back(newa);
             cout<<"No Trade"<<"\r"<<endl;
             for(int l = 0; l < orderbook.size(); l++)
             {   
@@ -656,41 +648,31 @@ int processthree(string message)
                         {     
                             if (type == 'b')
                             {
-                                for(int u= 0; u <netquantity[i] ; u++)
-                                {
-                                    netquantity[i] += nquantity;
-                                }
-                                for(int u= 0; u<nquantity; u++)
-                                {
-                                    orderbook.insert(orderbook.begin() + i + netquantity[i] - nquantity + u , orderbook[i]);
-                                }
-                                done = 1;
-                                break;
+                                nquantity = nquantity + netquant[i];
+                                netquant.erase(netquant.begin()+i);
+                                orderbook.erase(orderbook.begin()+i);
                             }
                             else
                             {
-                                if(nquantity < orderbook[i].netquantity)
+                                if(nquantity < netquant[i])
                                 {
-                                    for(int u= 0; u <orderbook[i].netquantity ; u++)
-                                    {
-                                        orderbook[i+u].netquantity -= nquantity;
-                                    }
-                                    orderbook.erase(orderbook.begin() + i, orderbook.begin() + i + nquantity);
+                                    netquant[i] -= nquantity;
                                     cout << "No Trade"<<"\r"<<endl;
                                     done = 1;
                                     ch = 0;
                                 }
-                                else if(nquantity == orderbook[i].netquantity)
+                                else if(nquantity == netquant[i])
                                 {
-                                    orderbook.erase(orderbook.begin() + i, orderbook.begin() + i + nquantity);
+                                    orderbook.erase(orderbook.begin() + i);
+                                    netquant.erase(netquant.begin()+i);
                                     cout << "No Trade"<<"\r"<<endl;
                                     done = 1;
                                     ch = 0;
                                 }
                                 else
                                 {
-                                    nquantity = nquantity - orderbook[i].netquantity;
-                                    orderbook.erase(orderbook.begin() + i, orderbook.begin() + i + orderbook[i].netquantity);
+                                    nquantity = nquantity - netquant[i];
+                                    orderbook.erase(orderbook.begin()+i);
                                 }
                             }
                             break;
@@ -705,80 +687,68 @@ int processthree(string message)
                         {     
                             if (type == 's')
                             {
-                                for(int u= 0; u <orderbook[i].netquantity ; u++)
-                                {
-                                    orderbook[i+u].netquantity += nquantity;
-                                }
-                                for(int u= 0; u<nquantity; u++)
-                                {
-                                    orderbook.insert(orderbook.begin() + i + orderbook[i].netquantity - nquantity + u , orderbook[i]);
-                                }
-                                done = 1;
-                                break;
+                                nquantity = nquantity + netquant[i];
+                                netquant.erase(netquant.begin()+i);
+                                orderbook.erase(orderbook.begin()+i);
                             }
                             else
                             {
-                                if(nquantity < orderbook[i].netquantity)
+                                if(nquantity < netquant[i])
                                 {
-                                    for(int u= 0; u <orderbook[i].netquantity ; u++)
-                                    {
-                                        orderbook[i+u].netquantity -= nquantity;
-                                    }
-                                    orderbook.erase(orderbook.begin() + i, orderbook.begin() + i + nquantity);
+                                    netquant[i] -= nquantity;
                                     cout << "No Trade"<<"\r"<<endl;
                                     done = 1;
                                     ch = 0;
                                 }
-                                else if(nquantity == orderbook[i].netquantity)
+                                else if(nquantity == netquant[i])
                                 {
-                                    orderbook.erase(orderbook.begin() + i, orderbook.begin() + i + nquantity);
+                                    orderbook.erase(orderbook.begin() + i);
+                                    netquant.erase(netquant.begin()+i);
                                     cout << "No Trade"<<"\r"<<endl;
                                     done = 1;
                                     ch = 0;
                                 }
                                 else
                                 {
-                                    nquantity = nquantity - orderbook[i].netquantity;
-                                    orderbook.erase(orderbook.begin() + i, orderbook.begin() + i + orderbook[i].netquantity);
+                                    nquantity = nquantity - netquant[i];
+                                    orderbook.erase(orderbook.begin()+i);
                                 }
                             }
-                        break;
+                            break;
                         }               
                     }
                 }
-                i += orderbook[i].netquantity;
+                i ++;
             }
             if (!done)
             {
                 newarbitorder newao;
                 newao.otype = type;
                 newao.netprice = nprice;
-                newao.netquantity = nquantity;
+                netquant.push_back(nquantity);
                 newao.quantity = quantity;
-                for (int z=0; z<nquantity; z++)
-                {
-                    orderbook.push_back(newao);
-                }
+                orderbook.push_back(newao);
             }
             if (!ch) continue;
 
-            vector<vector<int>> res = subsets(orderbook.size());
+            vector<vector<int>> res = createsubsets(netquant);
             bool sumbool2 =0; 
-
-            for (int i = 0; i < res.size(); i++) 
+            for (int i = 0; i < res.size(); i++)
             {
                 vector<int> sum(dname.size(),0);
                 bool sumbool = 0;
                 int profit = 0;
                 for(int k = 0 ; k < dname.size(); k++)
                 {
-                    for (int j = 0; j < res[i].size(); j++)
+                    for (int j = 0; j < orderbook.size(); j++)
                     {   
-                        if(orderbook[res[i][j]].otype=='b'){
-                            sum[k] += orderbook[res[i][j]].quantity[k];
+                        if(orderbook[j].otype=='b')
+                        {
+                            sum[k] += res[i][j]*orderbook[j].quantity[k];
                         }
-                        else{
-                            sum[k] -= orderbook[res[i][j]].quantity[k];
+                        else
+                        {
+                            sum[k] -= res[i][j]*orderbook[j].quantity[k];
                         }
                     }
                     if(sum[k]!=0)
@@ -788,28 +758,17 @@ int processthree(string message)
                     }
                 }
                 if (sumbool) continue;
-                for (int j = 0; j < res[i].size(); j++)
+                for (int j = 0; j < orderbook.size(); j++)
                 {
-                    if (orderbook[res[i][j]].otype == 'b') profit += orderbook[res[i][j]].netprice;
-                    else if (orderbook[res[i][j]].otype == 's') profit -= orderbook[res[i][j]].netprice;
+                    if (orderbook[j].otype == 'b') profit += res[i][j]*orderbook[j].netprice;
+                    else if (orderbook[j].otype == 's') profit -= res[i][j]*orderbook[j].netprice;
                 } 
                 if (profit > 0) 
                 {  
                     sumbool2 = 1; 
-                    new_possible_arbitage newpa;
-                    for(int y=0; y<res[i].size(); y++)
-                    {
-                        if(y!=0 && orderbook[res[i][y]].quantity==orderbook[res[i][y-1]].quantity && orderbook[res[i][y]].netprice==orderbook[res[i][y-1]].netprice)
-                        {
-                            newpa.nq[newpa.nq.size()-1]+=1;
-                        }
-                        else
-                        {
-                            newpa.indices.push_back(res[i][y]);
-                            newpa.nq.push_back(1);
-                        }
-                    }
-                    newpa.price = profit;
+                    new_possible_arbitrage newpa;
+                    newpa.arbit_profit = profit;
+                    newpa.quant = res[i];
                     new_arbitrage_array.push_back(newpa);
                 }
             }
@@ -822,42 +781,40 @@ int processthree(string message)
         int maxprofit = 0;
         int index;
 
-        if (new_arbitrage_array.size()==0) continue;
-
         for (int l = 0; l < new_arbitrage_array.size(); l++)
         {
-            if(new_arbitrage_array[l].price > maxprofit)
+            if(new_arbitrage_array[l].arbit_profit > maxprofit)
             {
-                maxprofit = new_arbitrage_array[l].price;
+                maxprofit = new_arbitrage_array[l].arbit_profit;
                 index = l;
             }
         }
-        for (int k = new_arbitrage_array[index].indices.size()-1; k >= 0; k--)
+        for (int k = orderbook.size()-1; k >= 0; k--)
         {
-            for (int p = 0; p < dname.size(); p++)
-            {   
-                if (orderbook[new_arbitrage_array[index].indices[k]].quantity[p] != 0) 
-                {
-                    cout<<dname[p]<<" "<<orderbook[new_arbitrage_array[index].indices[k]].quantity[p]<<" ";
+            if (new_arbitrage_array[index].quant[k] != 0) 
+            {
+                for (int p = 0; p < dname.size(); p++)
+                {   
+                    if(orderbook[k].quantity[p] !=0 )
+                    {
+                        cout<<dname[p]<<" "<<orderbook[k].quantity[p]<<" ";
+                    }
                 } 
-            }
-            if(orderbook[new_arbitrage_array[index].indices[k]].otype == 's')
-            {
-                orderbook[new_arbitrage_array[index].indices[k]].otype='b';
-            }
-            else
-            {
-                orderbook[new_arbitrage_array[index].indices[k]].otype='s';
-            }
-            cout<<orderbook[new_arbitrage_array[index].indices[k]].netprice<<" "<<new_arbitrage_array[index].nq[k]<<" "<<orderbook[new_arbitrage_array[index].indices[k]].otype<<"\r"<<endl;
-            orderbook[new_arbitrage_array[index].indices[k]].netquantity -= new_arbitrage_array[index].nq[k];
-            // cout<<orderbook[new_arbitrage_array[index].indices[k]].netquantity<<endl;
-            // cout<<new_arbitrage_array[index].indices[k]<<endl;
-            orderbook.erase(orderbook.begin() + new_arbitrage_array[index].indices[k], orderbook.begin() + new_arbitrage_array[index].indices[k] + new_arbitrage_array[index].nq[k]);
-            // cout<<orderbook.size()<<endl;
-            for(int u=0; u< orderbook[new_arbitrage_array[index].indices[k]].netquantity; u++)
-            {
-                orderbook[new_arbitrage_array[index].indices[k]+u].netquantity = orderbook[new_arbitrage_array[index].indices[k]].netquantity;
+                cout<<orderbook[k].netprice<<" "<<new_arbitrage_array[index].quant[k]<<" ";
+                if(orderbook[k].otype == 's')
+                {
+                    cout<<"b"<<"\r"<<endl;
+                }
+                else
+                {
+                    cout<<"s"<<"\r"<<endl;
+                }
+                netquant[k] -= new_arbitrage_array[index].quant[k];
+                if(netquant[k] == 0)
+                {
+                    orderbook.erase(orderbook.begin()+k);
+                    netquant.erase(netquant.begin()+k);
+                }
             }
         }
         totalprofit += maxprofit;
@@ -903,7 +860,7 @@ int main(int argc, char* argv[])
                 string message = rcv.readIML();
                 auto endmarker = message.end();
                 --endmarker;
-                tprofit += processtwo(message);
+                tprofit += processthree(message);
                 if (*endmarker == '$') break;
             }
             cout<<tprofit<<"\r"<<endl;

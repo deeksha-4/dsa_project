@@ -1,11 +1,14 @@
 // This is your trader. Place your orders from here
 
-
+#include <iostream>
 #include <string>
+#include <fstream>
+using namespace std;
 
 int reader(int time)
 {
-    return 1;
+    ifstream inf;
+    inf.open("output.txt");
 }
 
 int trader(std::string *message)
