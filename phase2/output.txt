@@ -1,37 +1,109 @@
 TL
-0 KarGoExpress SELL AMD $120 #32 1
-1 KarGoCorp SELL AMZN $100 #30 10
-1 KarGoCorp BUY GE $200 #20 8
-2 KarGoKrab BUY AMZN $130 #12 0
-2 KarGoTravels BUY AMD $100 #50 10
-3 KarGoCorp BUY AMZN $50 #30 5
-3 KarGoKrab BUY AMD $130 #10 7
-4 KarGoCorp SELL AMZN $50 #5 0
-4 KarGoExpress SELL GE $150 #50 6
-5 KarGoTravels BUY AMD $150 #25 0
-5 KarGoExpress BUY NFLX $80 #15 6
-6 KarGoExpress SELL AMD $80 #100 -1
-6 KarGoTravels SELL AMZN $50 #22 -1
-7 KarGoCorp BUY AMD $120 #10 1
-7 KarGoCorp SELL GE $50 #15 -1
-8 KarGoKrab BUY GE $110 #10 3
+0 SV BUY AMZN $407 #11 18
+1 AKG BUY NFLX $397 #7 -1
+1 AA SELL AMD $70 #14 4
+2 KG BUY AMZN $97 #11 10
+2 GS BUY AMZN $92 #8 18
+3 SM SELL GE $267 #10 -1
+3 KA BUY AMZN $261 #0 15
+4 AKG SELL GE $218 #14 14
+4 AA SELL NFLX $188 #13 14
+5 OT BUY AMZN $274 #12 10
+5 SM BUY NFLX $480 #13 8
+5 SM SELL AMD $250 #10 8
+6 GS SELL GE $165 #6 15
+7 SM BUY GE $96 #8
+7 KA BUY AMD $206 #9 17
+8 AA BUY NFLX $396 #1 7
+8 -------
+9 AKG SELL AMZN $295 #12 12
+9 GS SELL NFLX $abc #9 0
+10 SM SELL AAPL $102 #15 2
+10 OT BUY AMZN $256 #3 10
+11 KA BUY AMZN $29 #4 8
+11 SM BUY AAPL $211 #5 9
+12 SM SELL AMZN $162 #11 10
+12 AKG SELL AAPL $22 #13 13
+13 KG BUY AMZN $113 #16 13
+13 KA BUY AMZN $23 #8 8
+14 AA BUY AAPL $455 #16 8
+14 KG BUY AMD $322 #14 10
+15 AKG 4 NFLX $182 #11 13
+15 GS SELL AMD $242 #8 16
+16 SM BUY GE $221 #0 15
+16 SM BUY GE $231 #5 16
+17 GS SELL AMD $202 #12 8
+17 KA BUY AAPL $98 #6 16
+18 AKG BUY GE $94 #9 18
+18 AKG SELL GE $363 #2 13
+19 AA BUY NFLX $477 #11 0
+19 KG SELL AAPL $129 #16 19
+20 KG BUY AMD $105 #0 10
+20 OT SELLAMD $83 #9 11
+21 GS SELL GE #1 19
+21 SM BUY AMD $289 #12 7
+22 AKG SELL NFLX $370 #1 16
+22 GS BUY AMD $193 #2 5
+23 AA BUY GE $166 #0 17
+23 SM BUY AMZN $14 #16 0
+24 AA BUY AMZN $305 #16 19
+24 AA SELL AMD $279 #2 6
+25 KA BUY AMD $184 #13 16
+25 KG BUY NFLX $137 #3 15
+26 OT SELL NFLX $468 #9 -1
+26 KG BUY NFLX 3 ASML 4 $310 #9 -1
+27 GS SELL GE $286 #14 -1
+27 AKG SELL AAPL $331 #6 -1
+28 KA BUY NFLX $3 #0 4
+28 OT SELL AMD $132 #6 13
+29 AKG BUY GE $240 #7 17
+29 KA BUY AMD 3 3 $494 #5 -1
+30 AA BUY AMZN $390 #16 6
+30 OT BUY NFLX 3 ASML A $270 #6 -1
+31 SM SELL AAPL 308 #10 11
+31 KG BUY GE $270 #0 -1
+32 AKG BUY AMD $100 #13 9
+32 GS BUY AMZN $238 #0 8
+33 GS BUY NFLX $437 #5 -1
+33 KA SELL NFLX $204 #9 7
+34 AKG BUY NFLX $74 #16 5
+35 SV SELL AAPL $483 #12 8
+35 KG SELL NFLX $59 #7 18
+35 SELL AMZN $404 #7 -1
+35 SM SELL AAPL $406 #167
+35 GS SELL NFLX $333 #15 19
+35 KG BUY AMZN $133 8 1
+35 GS SELL NFLX $296 #15 16
 !@
 @!
 Successfully Initiated!
-KarGoKrab purchased 12 share of AMZN from KarGoCorp for $100/share
-KarGoCorp purchased 5 share of AMZN from KarGoCorp for $50/share
-KarGoCorp purchased 20 share of GE from KarGoExpress for $200/share
-KarGoKrab purchased 10 share of AMD from KarGoExpress for $130/share
-KarGoTravels purchased 50 share of AMD from KarGoExpress for $100/share
-KarGoCorp purchased 22 share of AMZN from KarGoTravels for $50/share
-KarGoCorp purchased 10 share of AMD from KarGoExpress for $80/share
-KarGoKrab purchased 10 share of GE from KarGoCorp for $50/share
+AKG purchased 7 share of NFLX from AA for $397/share
+SM purchased 6 share of NFLX from AA for $188/share
+SV purchased 11 share of AMZN from AKG for $407/share
+SM purchased 5 share of AAPL from SM for $102/share
+OT purchased 11 share of AMZN from SM for $274/share
+AA purchased 13 share of AAPL from AKG for $22/share
+KG purchased 8 share of AMD from GS for $322/share
+SM purchased 5 share of GE from GS for $165/share
+KG purchased 6 share of AMD from GS for $322/share
+KA purchased 6 share of AMD from GS for $206/share
+AA purchased 3 share of AAPL from KG for $455/share
+SM purchased 2 share of AMD from AA for $289/share
+KA purchased 6 share of AMD from OT for $184/share
+GS purchased 1 share of NFLX from AKG for $370/share
+GS purchased 4 share of NFLX from KA for $437/share
+KG purchased 3 share of NFLX from KG for $137/share
+AKG purchased 4 share of NFLX from KG for $74/share
 
 ---End of Day---
-Total Amount of Money Transferred: $14150
-Number of Completed Trades: 8
-Number of Shares Traded: 139
-KarGoExpress bought 0 and sold 90 for a net transfer of $11100
-KarGoCorp bought 57 and sold 27 for a net transfer of $-4200
-KarGoKrab bought 32 and sold 0 for a net transfer of $-3000
-KarGoTravels bought 50 and sold 22 for a net transfer of $-3900
+Total Amount of Money Transferred: $24635
+Number of Completed Trades: 19
+Number of Shares Traded: 101
+SV bought 11 and sold 0 for a net transfer of $-4477
+AKG bought 11 and sold 25 for a net transfer of $2058
+AA bought 16 and sold 15 for a net transfer of $2834
+KG bought 17 and sold 10 for a net transfer of $-2847
+GS bought 5 and sold 25 for a net transfer of $4451
+SM bought 18 and sold 16 for a net transfer of $483
+KA bought 12 and sold 4 for a net transfer of $-592
+OT bought 11 and sold 6 for a net transfer of $-1910

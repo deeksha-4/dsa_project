@@ -40,39 +40,55 @@ void market::start()
             v.push_back(s);
         }
 
-        new_order.start = stoi(v[0]);
-        if (*(--v.end()) == "-1") new_order.end = -1;
-        else new_order.end = stoi(*(--v.end())) + new_order.start;
-        new_order.name = v[1];
-        int n = v.size();
-        v[n-2].erase(v[n-2].begin());
-        new_order.quantity = stoi(v[n-2]);
-        v[n-3].erase(v[n-3].begin());
-        new_order.price = stoi(v[n-3]);
-        new_order.type = v[2][0];
+        if (v.size() < 7) {continue;}
 
-        int m = n-6; // size of lincomb
-
-        if (m==1)
+        try
         {
-            Stock s;
-            s.name = v[3];
-            s.quantity = 1;
-            new_order.items.push_back(s);
-        }
+            new_order.start = stoi(v[0]);
+            if (stoi(*(--v.end())) < -1) {continue;}
+            if (*(--v.end()) == "-1") new_order.end = -1;
+            else new_order.end = stoi(*(--v.end())) + new_order.start;
+            new_order.name = v[1];
+            int n = v.size();
+            if (*v[n-2].begin()!='#') {continue;}
+            if (*v[n-3].begin()!='$') {continue;}
+            if (v[2] != "SELL" && v[2] != "BUY") {continue;}
+            v[n-2].erase(v[n-2].begin());
+            new_order.quantity = stoi(v[n-2]);
+            v[n-3].erase(v[n-3].begin());
+            new_order.price = stoi(v[n-3]);
+            new_order.type = v[2][0];
 
-        else
-        {
-            int x = 3;
-            while(x<m+3)
+            int m = n-6; // size of lincomb
+
+            if (m==1)
             {
                 Stock s;
-                s.name = v[x];
-                s.quantity = stoi(v[x+1]);
-                x=x+2;
+                s.name = v[3];
+                s.quantity = 1;
                 new_order.items.push_back(s);
-            }            
+            }
+
+            else
+            {
+                if (m%2) {continue;}
+                int x = 3;
+                while(x<m+3)
+                {
+                    Stock s;
+                    s.name = v[x];
+                    s.quantity = stoi(v[x+1]);
+                    x=x+2;
+                    new_order.items.push_back(s);
+                }            
+            }
         }
+        catch(const std::invalid_argument& e)
+        {
+            cerr<<line<<" Invalid Argument"<<endl;
+            continue;
+        }
+        
 
         bool f = 0;
 
