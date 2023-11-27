@@ -18,7 +18,7 @@ market: main.cpp market.cpp worker.cpp blank_trader.cpp
 # For part2
 trader: main.cpp market.cpp worker.cpp trader.cpp
 	g++ -std=c++20 main.cpp market.cpp worker.cpp trader.cpp -lpthread -o trader
-	./trader 2 > output.txt
+	./trader 2 > output.txt 2> output2.txt
 
 clean:
 	rm -rf market trader output.txt

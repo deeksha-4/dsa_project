@@ -1,5 +1,6 @@
 #include "market.h"
 #include <iostream>
+#include <sstream>
 #include <fstream>
 using namespace std;
 
@@ -27,126 +28,50 @@ void market::start()
     while(getline(inf, line))
     {
         if (*(--line.end()) == '\r') line.pop_back();
-        if (line == "!@") break;
-        if (line == "TL") continue;
+        if (line == "@!") break;
+        if (line == "TL" || line == "!@") continue;
         Order new_order;
-        string temp, temp1, temp2, temp3, temp4;
-        auto it = line.begin();
-        while(*it!=' ')
-        {
-            temp.push_back(*it);
-            it++;
-        }
-        it++;
-        new_order.start = stoi(temp);
-        auto jt = line.end();
-        jt--;
-        while(*jt!=' ')
-        {
-            temp1.push_back(*jt);
-            jt--;
-        }
-        jt--;
-        if (temp1 == "1-") new_order.end = -1;
-        else
-        {
-            for (int k = temp1.size()-1; k>=0; k--)
-            {
-                temp2.push_back(temp1[k]);
-            }
-            
-            new_order.end = new_order.start + stoi(temp2);
-        }
-        while(*jt!='#')
-        {
-            temp3.push_back(*jt);
-            jt--;
-        }
-        jt--; jt--;
-        for (int k = temp3.size()-1; k>=0; k--)
-        {
-            temp4.push_back(temp3[k]);
-        }
-        new_order.quantity = stoi(temp4);
-        string temp5, temp6;
-        while(*jt!='$')
-        {
-            temp5.push_back(*jt);
-            jt--;
-        }
-        jt--; // jt is at last whitespace
-        for (int k = temp5.size()-1; k>=0; k--)
-        {
-            temp6.push_back(temp5[k]);
-        }
-        new_order.price = stoi(temp6);
-        string temp7, temp8;
-        while(*it!=' ')
-        {
-            temp7.push_back(*it);
-            it++;
-        }
-        it++;
-        new_order.name = temp7;
-        string tempo;
 
-        while(*it!=' ')
-        {
-            tempo.push_back(*it);
-            it++;
+        string s;
+        stringstream ss(line);
+    
+        vector<string> v;
+        while (getline(ss, s, ' ')) {
+            v.push_back(s);
         }
-        it++;
-        new_order.type = tempo[0];
 
-        while(*it!=' ')
-        {
-            temp8.push_back(*it);
-            it++;
-        }
-        if (it==jt) // no lincomb
+        new_order.start = stoi(v[0]);
+        if (*(--v.end()) == "-1") new_order.end = -1;
+        else new_order.end = stoi(*(--v.end())) + new_order.start;
+        new_order.name = v[1];
+        int n = v.size();
+        v[n-2].erase(v[n-2].begin());
+        new_order.quantity = stoi(v[n-2]);
+        v[n-3].erase(v[n-3].begin());
+        new_order.price = stoi(v[n-3]);
+        new_order.type = v[2][0];
+
+        int m = n-6; // size of lincomb
+
+        if (m==1)
         {
             Stock s;
-            s.name = temp8;
+            s.name = v[3];
             s.quantity = 1;
             new_order.items.push_back(s);
         }
 
         else
         {
-            it++;
-            // first take corresponding qtty
-            string temp9;
-            while(*it!=' ')
+            int x = 3;
+            while(x<m+3)
             {
-                temp9.push_back(*it);
-                it++;
-            }
-            
-            Stock s;
-            s.name = temp8;
-            s.quantity = stoi(temp9);
-            new_order.items.push_back(s);
-
-            while(it!=jt)
-            {
-                it++;
-                string temp10, temp11;
-                while(*it!=' ')
-                {
-                    temp10.push_back(*it);
-                    it++;
-                }
-                it++;
-                while(*it!=' ')
-                {
-                    temp11.push_back(*it);
-                    it++;
-                }
                 Stock s;
-                s.name = temp10;
-                s.quantity = stoi(temp11);
+                s.name = v[x];
+                s.quantity = stoi(v[x+1]);
+                x=x+2;
                 new_order.items.push_back(s);
-            }
+            }            
         }
 
         bool f = 0;
@@ -187,7 +112,7 @@ void market::start()
                 if (new_order.items == orderBook[i].items)
                 // gotta do this custom 
                 {
-                    if (tempo[0] == 'B')
+                    if (new_order.type == 'B')
                     {
                         // incoming order is buy, match with sell
                         if (orderBook[i].price <= new_order.price)
@@ -218,8 +143,8 @@ void market::start()
         }
 
         // now possible_matches has all the candidates
-        if (tempo[0] =='B') sort(possible_matches.begin(), possible_matches.end(), buy_key());
-        else if (tempo[0] =='S') sort(possible_matches.begin(), possible_matches.end(), sell_key());
+        if (new_order.type =='B') sort(possible_matches.begin(), possible_matches.end(), buy_key());
+        else if (new_order.type =='S') sort(possible_matches.begin(), possible_matches.end(), sell_key());
 
         bool flag = 0;
         vector<int> indices_to_delete;
@@ -228,7 +153,7 @@ void market::start()
         {
             if (flag) break;
             string buyer, seller;
-            if (tempo[0] == 'B')
+            if (new_order.type == 'B')
             {
                 buyer = new_order.name;
                 seller = possible_matches[i].order.name;
