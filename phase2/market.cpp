@@ -117,7 +117,7 @@ void market::start()
 
         for (int i = 0; i<orderBook.size(); ++i)
         {
-            if (orderBook[i].end >= 0 && orderBook[i].end <= new_order.start)
+            if (orderBook[i].end >= 0 && orderBook[i].end < new_order.start)
             {
                 // order already ded
                 continue;

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <atomic>
 #include <vector>
+#include <mutex>
 using namespace std;
 
 class Company
@@ -22,6 +23,8 @@ class Stock
     string name;
     int quantity;
 };
+
+vector<vector<int>> ind_quantity;
 
 class Order
 {
@@ -41,6 +44,9 @@ class candidate
 	Order order;
 	int index;
 };
+
+vector<int>netquantity;
+vector<string> dname;
 
 inline bool operator==(const Stock& s1, const Stock& s2)
 {
@@ -136,7 +142,6 @@ Order to_order(string line)
 vector<Order> orderBook;
 vector<median> prices;
 
-
 int binarySearch(vector<int> arr, int item, int low, int high) {
     while (low < high) {
         int mid = low + (high - low) / 2;
@@ -153,21 +158,40 @@ int binarySearch(vector<int> arr, int item, int low, int high) {
     return (item > arr[low]) ? (low + 1) : low;
 }
 
+
+vector<vector<int>> createsubsets(const vector<int>& netq) {
+    vector<vector<int>> new_possible_arbitrage;
+    for (int i = 0; i < netq.size(); i++) {
+        for (int j = i + 1; j < netq.size(); j++) {
+            for (int m = 1; m <= netq[i]; m++) {
+                for (int n = 1; n <= netq[j]; n++) {
+                    vector<int> subset(netq.size(), 0);
+                    subset[i] = m;
+                    subset[j] = n;
+                    new_possible_arbitrage.push_back(subset);
+                }
+            }
+        }
+    }
+    return new_possible_arbitrage;
+}
+
+
 int projected_profit = 0;
-int real_profit = 0;
 
 void update(int n, vector<string> v)
 {
     // now i consider orders in orderbook + v[n:]
-    for (int i = n; i<v.size(); ++i)
+    for (int z = n; z<v.size(); ++z)
     {
-        Order new_order = to_order(v[i]);
-        
+        int potato = -1;
+        Order new_order = to_order(v[z]);
+        vector<int> quantity(dname.size(),0);
         vector<candidate> possible_matches;
 
         for (int i = 0; i<orderBook.size(); ++i)
         {
-            if (orderBook[i].end >= 0 && orderBook[i].end <= new_order.start) continue;
+            if (orderBook[i].end >= 0 && orderBook[i].end < new_order.start) continue;
             if (orderBook[i].type != new_order.type)
             {
                 if (new_order.items == orderBook[i].items)
@@ -238,68 +262,279 @@ void update(int n, vector<string> v)
         }
 
         if (!new_order.quantity) continue;
-        
+        bool traded = 0;
         for (int k = 0; k<prices.size(); ++k)
         {
-            if (prices[k].items == new_order.items)
-            {                       
-                int med = prices[k].prev_trades[prices[k].prev_trades.size()/2];
-                if (new_order.type == 'B')
-                {
-                    if (new_order.price > med)
-                    {                        
-                        prices[k].prev_trades.insert(prices[k].prev_trades.begin()+binarySearch(prices[k].prev_trades, new_order.price, 0, prices[k].prev_trades.size()-1), new_order.price);
-                        int currentTime;
-                        {
-                            currentTime = commonTimer.load();
-                        }
-                        std::lock_guard<std::mutex> lock(printMutex);
-                        projected_profit += new_order.quantity*(new_order.price - med);
-                        std::cout << currentTime << " " << "22B0943_22B0988 SELL ";
-                        if (new_order.items.size() == 1 && new_order.items[0].quantity == 1)  cout<<new_order.items[0].name<<" ";
-                        else
-                        {
-                            for (auto g: new_order.items)
+            if (new_order.items.size()==1)
+            {
+                if (prices[k].items == new_order.items)
+                {     
+                    potato = k;                  
+                    int med = prices[k].prev_trades[prices[k].prev_trades.size()/2];
+                    if (new_order.type == 'B')
+                    {
+                        if (new_order.price > med)
+                        {                        
+                            prices[k].prev_trades.insert(prices[k].prev_trades.begin()+binarySearch(prices[k].prev_trades, new_order.price, 0, prices[k].prev_trades.size()-1), new_order.price);
+                            int currentTime;
                             {
-                                cout<<g.name<<" "<<g.quantity<<" ";
+                                currentTime = commonTimer.load();
                             }
+                            {std::lock_guard<std::mutex> lock(printMutex);
+                            projected_profit += new_order.quantity*(new_order.price - med);
+                            std::cout << currentTime << " " << "22B0943_22B0988 SELL ";
+                            traded = 1;
+                            if (new_order.items[0].quantity == 1)  cout<<new_order.items[0].name<<" ";
+                            else
+                            {
+                                for (auto g: new_order.items)
+                                {
+                                    cout<<g.name<<" "<<g.quantity<<" ";
+                                }
+                            }
+                            cout<<"$"<<new_order.price<<" #"<<new_order.quantity<<" ";
+                            if (new_order.end == -1) cout<<-1<<endl;
+                            else cout<<new_order.end - currentTime<<endl;}                            
                         }
-                        cout<<"$"<<new_order.price<<" #"<<new_order.quantity<<" ";
-                        if (new_order.end == -1) cout<<-1<<endl;
-                        else cout<<new_order.end - currentTime<<endl;                            
                     }
-                }
-                else
-                {
-                    if (new_order.price < med)
-                    {                        
-                        prices[k].prev_trades.insert(prices[k].prev_trades.begin()+binarySearch(prices[k].prev_trades, new_order.price, 0, prices[k].prev_trades.size()-1), new_order.price);                       
-                        
-                        int currentTime;
-                        {
-                            currentTime = commonTimer.load();
-                        }
-                        std::lock_guard<std::mutex> lock(printMutex);
-                        projected_profit -= new_order.quantity*(new_order.price - med);
-                        std::cout << currentTime << " " << "22B0943_22B0988 BUY ";
-                        if (new_order.items.size() == 1 && new_order.items[0].quantity == 1)  cout<<new_order.items[0].name<<" ";
-                        else
-                        {
-                            for (auto g: new_order.items)
+                    else
+                    {
+                        if (new_order.price < med)
+                        {                        
+                            prices[k].prev_trades.insert(prices[k].prev_trades.begin()+binarySearch(prices[k].prev_trades, new_order.price, 0, prices[k].prev_trades.size()-1), new_order.price);                       
+                            
+                            int currentTime;
                             {
-                                cout<<g.name<<" "<<g.quantity<<" ";
+                                currentTime = commonTimer.load();
                             }
-                        }
-                        cout<<"$"<<new_order.price<<" #"<<new_order.quantity<<" ";
-                        if (new_order.end == -1) cout<<-1<<endl;
-                        else cout<<new_order.end - currentTime<<endl;                            
-                    }                        
-                
+                            {std::lock_guard<std::mutex> lock(printMutex);
+                            projected_profit -= new_order.quantity*(new_order.price - med);
+                            std::cout << currentTime << " " << "22B0943_22B0988 BUY ";
+                            traded = 1;
+                            if (new_order.items[0].quantity == 1)  cout<<new_order.items[0].name<<" ";
+                            else
+                            {
+                                for (auto g: new_order.items)
+                                {
+                                    cout<<g.name<<" "<<g.quantity<<" ";
+                                }
+                            }
+                            cout<<"$"<<new_order.price<<" #"<<new_order.quantity<<" ";
+                            if (new_order.end == -1) cout<<-1<<endl;
+                            else cout<<new_order.end - currentTime<<endl;}                          
+                        }                        
+                    }
                 }
             }
         }
+        if (!traded)
+        {   
+            for (int p =0; p< new_order.items.size(); p++)
+            {
+                int namefound = -1;
+                for(int m = 0; m < dname.size(); m++)
+                {
+                    if(dname[m] == new_order.items[p].name)
+                    {
+                        namefound = m;
+                        quantity[m] = new_order.items[p].quantity;
+                        break;
+                    }
+                }
+                if(namefound = -1)
+                {
+                    quantity.push_back(new_order.items[p].quantity);
+                    dname.push_back(new_order.items[p].name);
+                }
+            }
+            for(int l = 0; l < orderBook.size(); l++)
+            {   
+                while(ind_quantity[l].size() < dname.size())
+                {
+                   ind_quantity[l].push_back(0);
+                }
+            }
+            if(netquantity.size() >= 2)
+            {
+                vector<vector<int>> res = createsubsets(netquantity);
+                for (int i = 0; i < res.size(); i++)
+                {
+                    vector<int> sum(dname.size(),0);
+                    bool sumbool = 0;
+                    vector<int> nq;
+                    for (int l=0; l < new_order.quantity; l++)
+                    {
+                        for (int j = 0; j < orderBook.size(); j++)
+                        {   
+                            if(orderBook[j].type =='B')
+                            {
+                                sum[0] += res[i][j]*ind_quantity[j][0];
+                            }
+                            else
+                            {
+                                sum[0] -= res[i][j]*ind_quantity[j][0];
+                            }
+                        }
+                        if(new_order.type == 'B')
+                        {
+                            if(sum[0] == -quantity[0]*l){nq.push_back(l);}
+                        }
+                        if(new_order.type == 'S')
+                        {
+                            if(sum[0] == quantity[0]*l){nq.push_back(l);}
+                        }
+                    }
+                    bool arbit_trade = 0;
+                    int index = -1;
+                    for(int l = nq.size()-1; l>=0 ; l--)
+                    {
+                        for(int k = 1; k<dname.size(); k++)
+                        {
+                            for (int j = 0; j < orderBook.size(); j++)
+                            {   
+                                if(orderBook[j].type =='B')
+                                {
+                                    sum[k] += res[i][j]*(ind_quantity[j][k]);
+                                }
+                                else
+                                {
+                                    sum[k] -= res[i][j]*(ind_quantity[j][k]);
+                                }
+                            }
+                            if(new_order.type == 'B')
+                            {
+                                if(sum[k] == -quantity[k]*nq[l]){arbit_trade = 1;}
+                                else{arbit_trade = 0; break;}
+                            }
+                            else if(new_order.type == 'S')
+                            {
+                                if(sum[k] == quantity[k]*nq[l]){arbit_trade = 1;}
+                                else{arbit_trade = 0; break;}
+                            }
+                        }
+                        if(arbit_trade == 1){index = l; break;}
+                    }
+                    if (index == -1) continue;
+                    int profit = 0;
+                    for(int j = 0; j < orderBook.size(); j++)
+                    {
+                        if (orderBook[j].type == 'B') profit += res[i][j]*orderBook[j].price;
+                        else if (orderBook[j].type == 'S') profit -= res[i][j]*orderBook[j].price;
+                    } 
+                    if(new_order.type == 'B')
+                    {
+                        profit += new_order.price*index;
+                    }
+                    else if(new_order.type == 'S')
+                    {
+                        profit -= new_order.price*index;
+                    }
+                    if (profit > 0) 
+                    {  
+                        projected_profit += profit;
+                        median new_trade;
+                        vector<int> timevec;
+                        timevec.push_back(new_order.end);
+                        for (int j = 0; j < orderBook.size(); j++)
+                        {
+                            if(res[i][j] !=0)
+                            {
+                                timevec.push_back(orderBook[j].end);
+                            }
+                        }
+                        int time = -1;
+                        sort(timevec.begin(), timevec.end());
+                        if (timevec[2]==-1){
+                            time = -1;
+                        }
+                        else if (timevec[1]==-1){
+                            time = timevec[2];
+                        }
+                        else if(timevec[0] ==-1){
+                            time = timevec[1];
+                        }
+                        else{
+                            time=timevec[0];
+                        }
+                        for (int j = 0; j < orderBook.size(); j++)
+                        {   
+                            if(res[i][j] !=0)
+                            {
+                                orderBook[j].quantity -= res[i][j];
+                                int currentTime;
+                                {
+                                    currentTime = commonTimer.load();
+                                }
+                                std::lock_guard<std::mutex> lock(printMutex);
+                                if(orderBook[j].type == 'B'){std::cout << currentTime << " " << "22B0943_22B0988 SELL ";}
+                                else if(orderBook[j].type == 'S'){std::cout << currentTime << " " << "22B0943_22B0988 BUY ";}
+                                if (orderBook[j].items[0].quantity == 1)  cout<<orderBook[j].items[0].name<<" ";
+                                else
+                                {
+                                    for (auto g: orderBook[j].items)
+                                    {
+                                        cout<<g.name<<" "<<g.quantity<<" ";
+                                    }
+                                }
+                                cout<<"$"<<orderBook[j].price<<" #"<<res[i][j]<<" ";
+                                if(orderBook[j].quantity == 0)
+                                {
+                                    orderBook.erase(orderBook.begin()+j);
+                                    netquantity.erase(netquantity.begin()+j);
+                                }
+                                if (time == -1) cout<<-1<<endl;
+                                else cout<<time - currentTime<<endl;
+                            }
+                        }
+                        if(new_order.items.size()==1)
+                        {
+                            if (potato == -1)
+                            {
+                                median m;
+                                Stock s;
+                                s.name = new_order.items[0].name;
+                                s.quantity = 1;
+                                m.items = {s};
+                                m.prev_trades = {new_order.price};
+                                prices.push_back(m);
+                            }
+                            else
+                            {
+                                prices[potato].prev_trades.insert(prices[potato].prev_trades.begin()+binarySearch(prices[potato].prev_trades, new_order.price, 0, prices[potato].prev_trades.size()-1), new_order.price);
+                            }
+                        }
+                        int currentTime;
+                        {
+                            currentTime = commonTimer.load();
+                        }
+                        {std::lock_guard<std::mutex> lock(printMutex);
+                        if(new_order.type == 'B'){std::cout << currentTime << " " << "22B0943_22B0988 SELL ";}
+                        else if(new_order.type == 'S'){std::cout << currentTime << " " << "22B0943_22B0988 BUY ";}
+                        std::cout << currentTime << " " << "22B0943_22B0988 BUY ";
+                        if (new_order.items[0].quantity == 1)  cout<<new_order.items[0].name<<" ";
+                        else
+                        {
+                            for (auto g: new_order.items)
+                            {
+                                cout<<g.name<<" "<<g.quantity<<" ";
+                            }
+                        }
+                        cout<<"$"<<new_order.price<<" #"<<index<<" ";
+                        new_order.quantity -= index;
+                        if (time == -1) cout<<-1<<endl;
+                        else cout<<time - currentTime<<endl;}     
+                        break;
+                    }
+                }
+            }
+            if (new_order.quantity !=0)
+            {
+                ind_quantity.push_back(quantity);
+                netquantity.push_back(new_order.quantity);
+                orderBook.push_back(new_order);
 
-        orderBook.push_back(new_order);
+            }
+        }
     }
 }
 
@@ -324,8 +559,6 @@ int reader(int time)
         }
         inputFile.close();
         inputFile.clear();
-
-        for (auto u: v) cerr<<u<<endl;
         // now v has the set of all orders we have seen till now
         // relevant part is only from [n:]
 
@@ -338,11 +571,7 @@ int reader(int time)
         {
             currentTime = commonTimer.load();
         }
-        // std::lock_guard<std::mutex> lock(printMutex);
-        // std::cout << currentTime << " " << "22B0943_22B0988 SELL GE $1 #50 6" << std::endl;
-        cerr<<"----"<<endl;
     }
-    cerr<<"projected_profit: "<<projected_profit<<endl;
     return 1;
 }
 
